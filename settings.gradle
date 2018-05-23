@@ -1,3 +1,4 @@
 rootProject.name = 'xacml-pep-spring-security'
 include 'xacml-resource-models'
+include 'security-expression-root'
 

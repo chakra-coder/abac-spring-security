@@ -1,5 +1,8 @@
 .gradle
 /build/
+**/build/**
+**/out/**
+**/build/libs/*.jar
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
