@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class AttributeDefinition {
 
 	@JsonProperty("Attribute")
-	private List<Attribute> attribute = new ArrayList<Attribute>();
+	private List<Attribute> attribute = new ArrayList<>();
 
 	@JsonProperty("Attribute")
 	public List<Attribute> getAttributes() {

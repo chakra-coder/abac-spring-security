@@ -16,7 +16,7 @@ public class Attribute {
 	@JsonProperty("AttributeId")
 	private String attributeId;
 	@JsonProperty("Value")
-	private List<Object> value = new ArrayList<Object>();
+	private List<Object> value = new ArrayList<>();
 	@JsonProperty("DataType")
 	private String dataType;
 

@@ -1,4 +1,4 @@
-package com.github.joffryferrater.pep;
+package com.github.joffryferrater.pep.client;
 
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.request.PDPRequest;

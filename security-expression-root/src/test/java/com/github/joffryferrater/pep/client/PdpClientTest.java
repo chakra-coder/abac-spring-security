@@ -1,4 +1,4 @@
-package com.github.joffryferrater.pep;
+package com.github.joffryferrater.pep.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
