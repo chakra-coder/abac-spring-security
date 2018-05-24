@@ -3,24 +3,13 @@ package com.github.joffryferrater.pep.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@ConfigurationProperties("axiomatics.pdp.server")
+@ConfigurationProperties("pdp.server")
 @Component
 public class PdpConfiguration {
 
-	private String ip = "localhost";
-	private int port = 8443;
-	private String username = "pdp-user";
-	private String password = "test123";
-	
-	
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
+	private String url;
+	private String username;
+	private String password;
 
 	public String getUsername() {
 		return username;
@@ -38,12 +27,12 @@ public class PdpConfiguration {
 		this.password = password;
 	}
 
-	public String getIp() {
-		return ip;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 	
