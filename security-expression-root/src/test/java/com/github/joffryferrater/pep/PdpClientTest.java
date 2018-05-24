@@ -57,7 +57,7 @@ public class PdpClientTest {
     @Test
     public void shouldReturnPdpResponse() throws URISyntaxException, MalformedURLException {
         PDPRequest pdpRequest = new PDPRequest();
-        PDPResponse response = target.isPermitted(pdpRequest);
+        PDPResponse response = target.sendXacmlJsonRequest(pdpRequest);
 
         assertThat(response.getResponse().getDecision(), is("Permit"));
     }

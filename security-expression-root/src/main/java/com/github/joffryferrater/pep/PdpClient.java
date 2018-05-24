@@ -24,7 +24,7 @@ public class PdpClient {
     }
 
 
-    public PDPResponse isPermitted(PDPRequest pdpRequest) throws URISyntaxException, MalformedURLException {
+    public PDPResponse sendXacmlJsonRequest(PDPRequest pdpRequest) throws URISyntaxException, MalformedURLException {
         final String url = pdpConfiguration.getUrl();
         return restTemplate.postForObject(new URL(url).toURI(), pdpRequest, PDPResponse.class);
     }

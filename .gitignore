@@ -2,10 +2,11 @@
 /build/
 **/build/**
 **/out/**
-**/build/libs/*.jar
+xacml-resource-models/build/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
+
 .apt_generated
 .classpath
 .factorypath
