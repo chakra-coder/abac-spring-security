@@ -10,16 +10,13 @@ import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.response.PDPResponse;
 import com.github.joffryferrater.response.Response;
 import java.util.Collection;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-@RunWith(SpringRunner.class)
 @RestClientTest(PdpClient.class)
 public class TestBase {
 

@@ -1,3 +1,7 @@
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 buildscript {
     ext {
         springBootVersion = '2.0.2.RELEASE'
@@ -8,6 +12,13 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
+}
+
+plugins {
+    id 'application'
+    id 'java'
+    id 'maven'
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
 }
 
 apply plugin: 'eclipse'
@@ -28,3 +39,43 @@ dependencies {
 }
 
 compileJava.dependsOn(processResources)
+
+jar{
+    enabled = true
+}
+mainClassName = 'com.github.joffryferrater.pep.PepApplication'
+
+shadowJar {
+    baseName = 'xacml-pep-spring-security'
+    archiveName = "${baseName}-${version}.jar"
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+    manifest {
+        attributes 'Implementation-Title': rootProject.name
+        attributes 'Implementation-Version': rootProject.version
+        attributes 'Implementation-Vendor-Id': rootProject.group
+        attributes 'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        attributes 'Built-By': InetAddress.localHost.hostName
+        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        attributes 'Main-Class': mainClassName
+    }
+}
+
+apply plugin: 'maven-publish'
+publishing {
+    publications {
+        jar(MavenPublication) {
+            groupId 'com.github.joffryferrater'
+            artifactId 'xacml-pep-spring-security'
+            from components.java
+            artifact shadowJar
+        }
+    }
+}
+
+artifactoryPublish {
+    publications ('jar')
+}
+
+publish.finalizedBy 'artifactoryPublish'

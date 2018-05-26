@@ -6,6 +6,7 @@ import com.github.joffryferrater.request.PDPRequest;
 import com.github.joffryferrater.request.Request;
 import com.github.joffryferrater.request.Resource;
 import com.github.joffryferrater.response.PDPResponse;
+import com.github.joffryferrater.response.Response;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -25,6 +26,7 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
      * Creates a new instance
      *
      * @param authentication the {@link Authentication} to use. Cannot be null.
+     * @param pdpClient the {@link PdpClient}
      */
     public XacmlMethodSecurityExpressionRoot(Authentication authentication, PdpClient pdpClient) {
         super(authentication);
@@ -57,7 +59,8 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
     }
 
     private boolean isPermitted(PDPResponse pdpResponse) {
-        return "Permit".equals(pdpResponse.getResponse().getDecision());
+        final Response response = pdpResponse.getResponse();
+        return "Permit".equals(response.getDecision());
     }
 
     @Override
