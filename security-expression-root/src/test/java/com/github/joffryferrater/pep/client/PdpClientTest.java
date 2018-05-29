@@ -25,7 +25,7 @@ public class PdpClientTest extends TestBase {
     @Before
     public void setUp() throws JsonProcessingException {
         PDPResponse pdpResponse = mockPdpResponse("Permit");
-        setExpectedResponse(pdpResponse);
+        setExpectedPdpResponse(pdpResponse);
     }
 
     @Test

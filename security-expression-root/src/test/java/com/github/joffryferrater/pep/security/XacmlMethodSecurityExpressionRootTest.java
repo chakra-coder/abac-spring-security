@@ -27,8 +27,8 @@ public class XacmlMethodSecurityExpressionRootTest extends TestBase {
     public void setUp(){
         target = new XacmlMethodSecurityExpressionRoot(new AuthenticationImpl(), pdpClient) {
             @Override
-            public boolean hasAccess(String attributeId, List<Object> values) {
-                return super.hasAccess(attributeId, values);
+            public boolean hasAccessToResource(String attributeId, List<Object> values) {
+                return super.hasAccessToResource(attributeId, values);
             }
         };
     }
@@ -36,9 +36,9 @@ public class XacmlMethodSecurityExpressionRootTest extends TestBase {
     @Test
     public void hasAccessShouldReturnTrue() throws JsonProcessingException {
         final PDPResponse pdpResponse = mockPdpResponse("Permit");
-        setExpectedResponse(pdpResponse);
+        setExpectedPdpResponse(pdpResponse);
 
-        final boolean hasAccess = target.hasAccess("someAttributeId", Collections.singletonList("someValue"));
+        final boolean hasAccess = target.hasAccessToResource("someAttributeId", Collections.singletonList("someValue"));
         assertThat(hasAccess, is(true));
     }
 }

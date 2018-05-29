@@ -6,8 +6,12 @@ import com.github.joffryferrater.response.PDPResponse;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,10 +27,18 @@ public class PdpClient {
         this.pdpConfiguration = pdpConfiguration;
     }
 
-
     public PDPResponse sendXacmlJsonRequest(PDPRequest pdpRequest) throws URISyntaxException, MalformedURLException {
+        HttpHeaders headers = createHeaders();
+        HttpEntity<PDPRequest> entity = new HttpEntity<>(pdpRequest, headers);
         final String url = pdpConfiguration.getUrl();
-        return restTemplate.postForObject(new URL(url).toURI(), pdpRequest, PDPResponse.class);
+        return restTemplate.postForObject(new URL(url).toURI(), entity, PDPResponse.class);
+    }
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/xacml+json");
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return headers;
     }
 }
 

@@ -33,9 +33,10 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
         this.pdpClient = pdpClient;
     }
 
-    public boolean hasAccess(String attributeId, List<Object> values) {
+    public boolean hasAccessToResource(String attributeId, List<Object> values) {
         final PDPRequest pdpRequest = createResourceAttributeRequest(attributeId, values);
         try {
+
             final PDPResponse pdpResponse = pdpClient.sendXacmlJsonRequest(pdpRequest);
             return isPermitted(pdpResponse);
         } catch (URISyntaxException | MalformedURLException e) {

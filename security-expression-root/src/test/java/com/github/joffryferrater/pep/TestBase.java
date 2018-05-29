@@ -1,5 +1,7 @@
 package com.github.joffryferrater.pep;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -12,6 +14,7 @@ import com.github.joffryferrater.response.Response;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +34,7 @@ public class TestBase {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public PDPResponse mockPdpResponse(String decision) {
+    protected PDPResponse mockPdpResponse(String decision) {
         PDPResponse pdpResponse = new PDPResponse();
         Response response = new Response();
         response.setDecision(decision);
@@ -39,10 +42,12 @@ public class TestBase {
         return pdpResponse;
     }
 
-    public void setExpectedResponse(PDPResponse pdpResponse) throws JsonProcessingException {
+    protected void setExpectedPdpResponse(PDPResponse pdpResponse) throws JsonProcessingException {
         String responseInString = objectMapper.writeValueAsString(pdpResponse);
-        this.server.expect(requestTo(configuration.getUrl())).andRespond(withSuccess(responseInString,
-            MediaType.APPLICATION_JSON));
+        this.server.expect(requestTo(configuration.getUrl()))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(header("Content-Type", "application/xacml+json"))
+            .andRespond(withSuccess(responseInString, MediaType.APPLICATION_JSON));
     }
 
     public class AuthenticationImpl implements Authentication {
