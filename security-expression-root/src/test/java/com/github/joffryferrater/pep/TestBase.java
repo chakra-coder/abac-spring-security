@@ -47,6 +47,8 @@ public class TestBase {
         this.server.expect(requestTo(configuration.getUrl()))
             .andExpect(method(HttpMethod.POST))
             .andExpect(header("Content-Type", "application/xacml+json"))
+            //YWRtaW46cGFzc3dvcmQ= is base64 encoded of admin:password
+            .andExpect(header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ="))
             .andRespond(withSuccess(responseInString, MediaType.APPLICATION_JSON));
     }
 

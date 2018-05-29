@@ -6,6 +6,7 @@ import com.github.joffryferrater.response.PDPResponse;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -38,6 +39,11 @@ public class PdpClient {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/xacml+json");
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        final String username = pdpConfiguration.getUsername();
+        final String password = pdpConfiguration.getPassword();
+        final String base64EncodedCredentials = Base64.getEncoder()
+            .encodeToString((username + ":" + password).getBytes());
+        headers.add("Authorization", "Basic " + base64EncodedCredentials);
         return headers;
     }
 }

@@ -20,9 +20,7 @@ public class PepApplication {
 
     @Bean
     public PdpConfiguration pdpConfiguration() {
-        PdpConfiguration pdpConfiguration = new PdpConfiguration();
-        pdpConfiguration.setUrl("http://localhost:8081/asm-pdp/authorize");
-        return pdpConfiguration;
+        return new PdpConfiguration();
     }
 }
 

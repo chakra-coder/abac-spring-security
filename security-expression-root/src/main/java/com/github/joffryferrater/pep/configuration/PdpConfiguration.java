@@ -3,7 +3,7 @@ package com.github.joffryferrater.pep.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@ConfigurationProperties("pdp.server")
+@ConfigurationProperties(prefix = "pdp.server")
 @Component
 public class PdpConfiguration {
 
