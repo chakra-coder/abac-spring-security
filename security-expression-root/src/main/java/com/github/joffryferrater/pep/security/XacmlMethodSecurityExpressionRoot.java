@@ -10,12 +10,16 @@ import com.github.joffryferrater.response.Response;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
 
 public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressionRoot implements
     MethodSecurityExpressionOperations {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XacmlMethodSecurityExpressionRoot.class);
 
     private Object filterObject;
     private Object returnObject;
@@ -34,14 +38,13 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
     }
 
     public boolean hasAccessToResource(String attributeId, List<Object> values) {
+        LOGGER.debug("Entering hasAccessToResource(attributeId={},values={}", attributeId, values);
         final PDPRequest pdpRequest = createResourceAttributeRequest(attributeId, values);
         try {
-
             final PDPResponse pdpResponse = pdpClient.sendXacmlJsonRequest(pdpRequest);
             return isPermitted(pdpResponse);
         } catch (URISyntaxException | MalformedURLException e) {
-            //TO DO: Replace with Logger
-            e.printStackTrace();
+            LOGGER.error("Exception occurs on sending request to PDP server", e);
         }
         return false;
     }
@@ -61,7 +64,9 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
 
     private boolean isPermitted(PDPResponse pdpResponse) {
         final Response response = pdpResponse.getResponse();
-        return "Permit".equals(response.getDecision());
+        final boolean isPermitted = "Permit".equals(response.getDecision());
+        LOGGER.debug("isPermitted: {}", isPermitted);
+        return isPermitted;
     }
 
     @Override

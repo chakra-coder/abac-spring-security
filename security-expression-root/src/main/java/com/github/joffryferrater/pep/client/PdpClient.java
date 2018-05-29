@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Base64;
 import java.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -19,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class PdpClient {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdpClient.class);
+
     private final RestTemplate restTemplate;
     private final PdpConfiguration pdpConfiguration;
 
@@ -29,6 +33,7 @@ public class PdpClient {
     }
 
     public PDPResponse sendXacmlJsonRequest(PDPRequest pdpRequest) throws URISyntaxException, MalformedURLException {
+        LOGGER.debug("Sending pdp request : {}", pdpRequest);
         HttpHeaders headers = createHeaders();
         HttpEntity<PDPRequest> entity = new HttpEntity<>(pdpRequest, headers);
         final String url = pdpConfiguration.getUrl();
