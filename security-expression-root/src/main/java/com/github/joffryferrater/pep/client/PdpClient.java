@@ -39,12 +39,16 @@ public class PdpClient {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/xacml+json");
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        final String username = pdpConfiguration.getUsername();
-        final String password = pdpConfiguration.getPassword();
-        final String base64EncodedCredentials = Base64.getEncoder()
-            .encodeToString((username + ":" + password).getBytes());
+        final String base64EncodedCredentials = getBase64EncodedCredentials();
         headers.add("Authorization", "Basic " + base64EncodedCredentials);
         return headers;
+    }
+
+    private String getBase64EncodedCredentials() {
+        final String username = pdpConfiguration.getUsername();
+        final String password = pdpConfiguration.getPassword();
+        return Base64.getEncoder()
+            .encodeToString((username + ":" + password).getBytes());
     }
 }
 

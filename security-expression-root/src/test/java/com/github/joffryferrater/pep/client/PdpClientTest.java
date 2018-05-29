@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.joffryferrater.pep.TestBase;
-import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.request.PDPRequest;
 import com.github.joffryferrater.response.PDPResponse;
 import java.net.MalformedURLException;
@@ -15,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
