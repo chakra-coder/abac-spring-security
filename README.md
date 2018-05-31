@@ -46,7 +46,7 @@ By overriding the ``addAccessSubjectCategory`` in the above example, the method 
 		"Resource": {
 			"Attribute": []
 		},
-    "AccessSubject": {
+                "AccessSubject": {
 			"Attribute": []
 		}
 	}
