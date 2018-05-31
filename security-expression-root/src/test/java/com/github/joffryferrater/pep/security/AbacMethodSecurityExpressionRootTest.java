@@ -21,16 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-public class XacmlMethodSecurityExpressionRootTest extends TestBase {
+public class AbacMethodSecurityExpressionRootTest extends TestBase {
 
-    private XacmlMethodSecurityExpressionRoot target;
+    private AbacMethodSecurityExpressionRoot target;
 
     @Autowired
     PdpClient pdpClient;
 
     @Before
     public void setUp(){
-        target = new XacmlMethodSecurityExpressionRoot(new AuthenticationImpl(), pdpClient) {
+        target = new AbacMethodSecurityExpressionRoot(new AuthenticationImpl(), pdpClient) {
 
             @Override
             public boolean hasAccessToResource(String attributeId, List<Object> values) {

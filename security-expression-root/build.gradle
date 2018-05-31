@@ -46,7 +46,7 @@ jar{
 mainClassName = 'com.github.joffryferrater.pep.PepApplication'
 
 shadowJar {
-    baseName = 'xacml-pep-spring-security'
+    baseName = 'abac-spring-security'
     archiveName = "${baseName}-${version}.jar"
     mergeServiceFiles()
     exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
@@ -67,7 +67,7 @@ publishing {
     publications {
         jar(MavenPublication) {
             groupId 'com.github.joffryferrater'
-            artifactId 'xacml-pep-spring-security'
+            artifactId 'abac-spring-security'
             from components.java
             artifact shadowJar
         }

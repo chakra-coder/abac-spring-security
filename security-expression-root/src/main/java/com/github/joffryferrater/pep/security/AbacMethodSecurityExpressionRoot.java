@@ -19,10 +19,10 @@ import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
 
-public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressionRoot implements
+public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressionRoot implements
     MethodSecurityExpressionOperations {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XacmlMethodSecurityExpressionRoot.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbacMethodSecurityExpressionRoot.class);
 
     private Object filterObject;
     private Object returnObject;
@@ -35,7 +35,7 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
      * @param authentication the {@link Authentication} to use. Cannot be null.
      * @param pdpClient the {@link PdpClient}
      */
-    public XacmlMethodSecurityExpressionRoot(Authentication authentication, PdpClient pdpClient) {
+    public AbacMethodSecurityExpressionRoot(Authentication authentication, PdpClient pdpClient) {
         super(authentication);
         this.pdpClient = pdpClient;
     }
