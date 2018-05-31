@@ -5,92 +5,81 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "AccessSubject" })
+@JsonPropertyOrder({
+	"AccessSubject",
+	"Action",
+	"Resource",
+	"Environment"
+})
 public class Request {
 
 	@JsonProperty("AccessSubject")
-	private AccessSubject accessSubject;
+	private AccessSubjectCategory accessSubjectCategory = new AccessSubjectCategory();
 
 	@JsonProperty("Action")
-	private Action action;
+	private ActionCategory actionCategory = new ActionCategory();
 	
 	@JsonProperty("Environment")
-	private Environment environment;
+	private EnvironmentCategory environmentCategory = new EnvironmentCategory();
 	
 	@JsonProperty("Resource")
-	private Resource resource;
+	private ResourceCategory resourceCategory = new ResourceCategory();
 
-	public AccessSubject getAccessSubject() {
-		return accessSubject;
-	}
-	
-	public Request addAccessSubject(AccessSubject accessSubject) {
-		if(this.accessSubject == null) {
-			this.accessSubject = accessSubject;
-		} else {
-			this.accessSubject.addAllAttributes(accessSubject.getAttributes());
-		}
+	public Request addAccessSubjectCategory(AccessSubjectCategory accessSubject) {
+		this.accessSubjectCategory.addAllAttributes(accessSubject.getAttributes());
 		return this;
 	}
 	
-	public Request withAccessSubject(AccessSubject accessSubject) {
-		this.accessSubject = accessSubject;
+	public Request withAccessSubjectCategory(AccessSubjectCategory accessSubject) {
+		this.accessSubjectCategory = accessSubject;
 		return this;
 	}
 
-	public Request addActionAttribute(Action action) {
-		if(this.action == null) {
-			this.action = action;
-		} else {
-			this.action.addAllAttributes(action.getAttributes());
-		}
+	public Request addActionCategory(ActionCategory action) {
+    	this.actionCategory.addAllAttributes(action.getAttributes());
 		return this;
 	}
 	
-	public Request withAction(Action action) {
-		this.action = action;
+	public Request withActionCategory(ActionCategory action) {
+		this.actionCategory = action;
 		return this;
 	}
 	
-	public Request addEnvironment(Environment environment) {
-		if(this.environment == null) {
-			this.environment = environment;
-		} else {
-			this.environment.addAllAttributes(environment.getAttributes());
-		}
+	public Request addEnvironmentCategory(EnvironmentCategory environment) {
+		this.environmentCategory.addAllAttributes(environment.getAttributes());
 		return this;
 	}
 	
-	public Request withEnvironment(Environment environment) {
-		this.environment = environment;
+	public Request withEnvironmentCategory(EnvironmentCategory environment) {
+		this.environmentCategory = environment;
 		return this;
 	}
 	
-	public Request addResource(Resource resource) {
-		if(this.resource == null) {
-			this.resource = resource;
-		} else {
-			this.resource.addAllAttributes(resource.getAttributes());
-		}
+	public Request addResourceCategory(ResourceCategory resource) {
+		this.resourceCategory.addAllAttributes(resource.getAttributes());
 		return this;
 	}
 	
-	public Request withResource(Resource resource) {
-		this.resource = resource;
+	public Request withResourceCategory(ResourceCategory resource) {
+		this.resourceCategory = resource;
 		return this;
-	}
-	
-	public Action getAction() {
-		return action;
 	}
 
-	public Environment getEnvironment() {
-		return environment;
+	public AccessSubjectCategory getAccessSubjectCategory() {
+		return accessSubjectCategory;
+	}
+
+	public ActionCategory getActionCategory() {
+		return actionCategory;
+	}
+
+	public EnvironmentCategory getEnvironmentCategory() {
+		return environmentCategory;
 	}
 
 
-	public Resource getResource() {
-		return resource;
+	public ResourceCategory getResourceCategory() {
+		return resourceCategory;
 	}
 
 }

@@ -36,7 +36,7 @@ public class Attribute {
 	}
 
 	@JsonProperty("Value")
-	public Collection<Object> getValue() {
+	public List<Object> getValue() {
 		return value;
 	}
 

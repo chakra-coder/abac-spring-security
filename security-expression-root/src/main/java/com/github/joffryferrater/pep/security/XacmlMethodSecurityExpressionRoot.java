@@ -1,10 +1,13 @@
 package com.github.joffryferrater.pep.security;
 
 import com.github.joffryferrater.pep.client.PdpClient;
+import com.github.joffryferrater.request.AccessSubjectCategory;
+import com.github.joffryferrater.request.ActionCategory;
 import com.github.joffryferrater.request.Attribute;
+import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.PDPRequest;
 import com.github.joffryferrater.request.Request;
-import com.github.joffryferrater.request.Resource;
+import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.response.PDPResponse;
 import com.github.joffryferrater.response.Response;
 import java.net.MalformedURLException;
@@ -39,7 +42,7 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
 
     public boolean hasAccessToResource(String attributeId, List<Object> values) {
         LOGGER.debug("Entering hasAccessToResource(attributeId={},values={}", attributeId, values);
-        final PDPRequest pdpRequest = createResourceAttributeRequest(attributeId, values);
+        final PDPRequest pdpRequest = getAllCategoriesRequest(attributeId, values);
         try {
             final PDPResponse pdpResponse = pdpClient.sendXacmlJsonRequest(pdpRequest);
             return isPermitted(pdpResponse);
@@ -49,24 +52,38 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
         return false;
     }
 
-    private PDPRequest createResourceAttributeRequest(String attributeId, List<Object> values) {
-        Attribute attribute = new Attribute();
-        attribute.setAttributeId(attributeId);
-        attribute.setValue(values);
-        Resource resource = new Resource();
-        resource.addAttribute(attribute);
-        Request request = new Request();
-        request.addResource(resource);
+    private PDPRequest getAllCategoriesRequest(String attributeId, List<Object> values) {
+        Request request = createResourceCategoryRequest(attributeId, values);
+        addCategoriesToRequest(request);
         PDPRequest pdpRequest = new PDPRequest();
         pdpRequest.setRequest(request);
         return pdpRequest;
     }
+
 
     private boolean isPermitted(PDPResponse pdpResponse) {
         final Response response = pdpResponse.getResponse();
         final boolean isPermitted = "Permit".equals(response.getDecision());
         LOGGER.debug("isPermitted: {}", isPermitted);
         return isPermitted;
+    }
+
+    private Request createResourceCategoryRequest(String attributeId, List<Object> values) {
+        Attribute attribute = new Attribute();
+        attribute.setAttributeId(attributeId);
+        attribute.setValue(values);
+        ResourceCategory resource = new ResourceCategory();
+        resource.addAttribute(attribute);
+        Request request = new Request();
+        request.addResourceCategory(resource);
+        return request;
+    }
+
+    private void addCategoriesToRequest(Request request) {
+        request.addAccessSubjectCategory(addAccessSubjectCategoryRequest());
+        request.addActionCategory(addActionCategoryRequest());
+        request.addEnvironmentCategory(addEnvironmentCategoryRequest());
+        request.addResourceCategory(addResourceCategoryRequest());
     }
 
     @Override
@@ -92,5 +109,21 @@ public abstract class XacmlMethodSecurityExpressionRoot extends SecurityExpressi
     @Override
     public Object getThis() {
         return this;
+    }
+
+    protected AccessSubjectCategory addAccessSubjectCategoryRequest() {
+        return new AccessSubjectCategory();
+    }
+
+    protected ActionCategory addActionCategoryRequest() {
+        return new ActionCategory();
+    }
+
+    protected EnvironmentCategory addEnvironmentCategoryRequest() {
+        return new EnvironmentCategory();
+    }
+
+    protected ResourceCategory addResourceCategoryRequest() {
+        return new ResourceCategory();
     }
 }

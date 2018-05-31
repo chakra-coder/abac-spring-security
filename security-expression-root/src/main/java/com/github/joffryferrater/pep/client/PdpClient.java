@@ -36,7 +36,7 @@ public class PdpClient {
         LOGGER.debug("Sending pdp request : {}", pdpRequest);
         HttpHeaders headers = createHeaders();
         HttpEntity<PDPRequest> entity = new HttpEntity<>(pdpRequest, headers);
-        final String url = pdpConfiguration.getUrl();
+        final String url = pdpConfiguration.getAuthorizeEndpoint();
         return restTemplate.postForObject(new URL(url).toURI(), entity, PDPResponse.class);
     }
 

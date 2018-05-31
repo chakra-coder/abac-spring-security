@@ -44,7 +44,7 @@ public class TestBase {
 
     protected void setExpectedPdpResponse(PDPResponse pdpResponse) throws JsonProcessingException {
         String responseInString = objectMapper.writeValueAsString(pdpResponse);
-        this.server.expect(requestTo(configuration.getUrl()))
+        this.server.expect(requestTo(configuration.getAuthorizeEndpoint()))
             .andExpect(method(HttpMethod.POST))
             .andExpect(header("Content-Type", "application/xacml+json"))
             //YWRtaW46cGFzc3dvcmQ= is base64 encoded of admin:password

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PdpConfiguration {
 
-	private String url;
+	private String authorizeEndpoint;
 	private String username;
 	private String password;
 
@@ -27,12 +27,12 @@ public class PdpConfiguration {
 		this.password = password;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getAuthorizeEndpoint() {
+		return authorizeEndpoint;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setAuthorizeEndpoint(String authorizeEndpoint) {
+		this.authorizeEndpoint = authorizeEndpoint;
 	}
 	
 	
