@@ -21,23 +21,34 @@ In order to add more Categories to the request, the following methods can be ove
 
 The following is an example of overriding the ``addAccessSubjectCategoryRequest``. The current username is added as AccessSubject category to the request.
 ```
-...
+import com.github.joffryferrater.pep.client.PdpClient;
+import com.github.joffryferrater.pep.security.AbacMethodSecurityExpressionRoot;
+import com.github.joffryferrater.request.AccessSubjectCategory;
+import com.github.joffryferrater.request.Attribute;
+import java.util.Collections;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-@Autowired
-private HttpServletRequest httpServletRequest;
+public class MyMethodSecurityExpressionRoot extends AbacMethodSecurityExpressionRoot {
 
-@Override
-protected AccessSubjectCategory addAccessSubjectCategory() {
-    AccessSubjectCategory accessSubjectCategory = new AccessSubjectCategory();
-    Attribute attribute = new Attribute();
-    attribute.setAttributeId("<some access subject attribute id>");
-    final String currentUser = httpServletRequest.getUserPrincipal().getName();
-    attribute.setValue(Collections.singletonList(currentUser));
-    accessSubjectCategory.withAttribute(attribute);
-    return accessSubjectCategory;
+    public MyMethodSecurityExpressionRoot(Authentication authentication,
+        PdpClient pdpClient) {
+        super(authentication, pdpClient);
+    }
+
+    @Override
+    protected AccessSubjectCategory addAccessSubjectCategoryRequest() {
+        // Sends the current user as access subject id attribute
+        AccessSubjectCategory accessSubjectCategory = new AccessSubjectCategory();
+        Attribute attribute = new Attribute();
+        attribute.setAttributeId("urn:oasis:names:tc:xacml:1.0:subject:subject-id");
+        final String currentUser =  SecurityContextHolder.getContext().getAuthentication().getName();
+        attribute.setValue(Collections.singletonList(currentUser));
+        accessSubjectCategory.withAttributes(attribute);
+        return accessSubjectCategory;
+    }
 }
 
-...
 ```
 By overriding the ``addAccessSubjectCategory`` in the above example, the method security expression sends the XACML request in JSON to the PDP server in the following representation:
 ````
