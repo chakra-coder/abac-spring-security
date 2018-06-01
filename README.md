@@ -63,3 +63,5 @@ By overriding the ``addAccessSubjectCategory`` in the above example, the method 
 	}
 }
 ````
+
+## See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security 
