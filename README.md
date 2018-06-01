@@ -11,6 +11,29 @@ The project, Attribute Based Access Control for Spring Security, provides a cust
 	}
 }
 ````
+Sample usage of ``hasAccessToResource``: 
+```
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class SampleResource {
+
+    @GetMapping("/helloWorld")
+    @PreAuthorize("hasAccessToResource('Attributes.resource.endpoint', { 'helloWorld' })")
+    public String printHelloWorld(){
+        return "hello world";
+    }
+
+    @GetMapping("/helloWorld/{id}")
+    @PreAuthorize("hasAccessToResource('Attributes.resource.endpoint', { 'helloWorld/'+#id })")
+    public String getHelloWorldId(@PathVariable String id){
+        return "hello world id is: " + id;
+    }
+}
+```
 
 In order to add more Categories to the request, the following methods can be overriden:
 * addAccessSubjectCategoryRequest
