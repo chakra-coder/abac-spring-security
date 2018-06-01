@@ -7,9 +7,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.joffryferrater.pep.TestBase;
 import com.github.joffryferrater.request.PDPRequest;
-import com.github.joffryferrater.response.PDPResponse;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import com.github.joffryferrater.response.Response;
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,7 @@ public class PdpClientTest extends TestBase {
 
     @Before
     public void setUp() throws JsonProcessingException {
-        PDPResponse pdpResponse = mockPdpResponse("Permit");
+        Response pdpResponse = mockPdpResponse("Permit");
         setExpectedPdpResponse(pdpResponse);
     }
 
@@ -34,11 +33,11 @@ public class PdpClientTest extends TestBase {
     }
 
     @Test
-    public void shouldReturnPdpResponse() throws URISyntaxException, MalformedURLException {
+    public void shouldReturnPdpResponse() throws IOException {
         PDPRequest pdpRequest = new PDPRequest();
-        PDPResponse response = target.sendXacmlJsonRequest(pdpRequest);
+        Response response = target.sendXacmlJsonRequest(pdpRequest);
 
-        assertThat(response.getResponse().getDecision(), is("Permit"));
+        assertThat(response.getDecision(), is("Permit"));
     }
 
 }

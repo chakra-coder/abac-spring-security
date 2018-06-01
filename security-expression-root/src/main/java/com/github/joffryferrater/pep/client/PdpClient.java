@@ -1,13 +1,11 @@
 package com.github.joffryferrater.pep.client;
 
+import com.github.joffryferrater.pep.common.JsonUtility;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.request.PDPRequest;
-import com.github.joffryferrater.response.PDPResponse;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import com.github.joffryferrater.response.Response;
+import java.io.IOException;
 import java.util.Base64;
-import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,26 +22,30 @@ public class PdpClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(PdpClient.class);
 
     private final RestTemplate restTemplate;
-    private final PdpConfiguration pdpConfiguration;
+    @Autowired
+    private PdpConfiguration pdpConfiguration;
 
     @Autowired
-    public PdpClient(RestTemplateBuilder restTemplateBuilder, PdpConfiguration pdpConfiguration) {
+    public PdpClient(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
-        this.pdpConfiguration = pdpConfiguration;
     }
 
-    public PDPResponse sendXacmlJsonRequest(PDPRequest pdpRequest) throws URISyntaxException, MalformedURLException {
+    public Response sendXacmlJsonRequest(PDPRequest pdpRequest)
+        throws IOException {
         LOGGER.debug("Sending pdp request : {}", pdpRequest);
         HttpHeaders headers = createHeaders();
         HttpEntity<PDPRequest> entity = new HttpEntity<>(pdpRequest, headers);
+        LOGGER.debug("http headers: {}", entity.getHeaders());
+        LOGGER.debug("http requestBody: {}", entity.getBody());
         final String url = pdpConfiguration.getAuthorizeEndpoint();
-        return restTemplate.postForObject(new URL(url).toURI(), entity, PDPResponse.class);
+        final String pdpResponse = restTemplate.postForObject(url, entity, String.class);
+        LOGGER.debug("Pdp Response: {}", pdpResponse);
+        return JsonUtility.getPDPResponse(pdpResponse);
     }
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/xacml+json");
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         final String base64EncodedCredentials = getBase64EncodedCredentials();
         headers.add("Authorization", "Basic " + base64EncodedCredentials);
         return headers;

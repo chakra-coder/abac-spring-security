@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
-import com.github.joffryferrater.response.PDPResponse;
 import com.github.joffryferrater.response.Response;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +33,13 @@ public class TestBase {
     @Autowired
     private ObjectMapper objectMapper;
 
-    protected PDPResponse mockPdpResponse(String decision) {
-        PDPResponse pdpResponse = new PDPResponse();
-        Response response = new Response();
-        response.setDecision(decision);
-        pdpResponse.setResponse(response);
+    protected Response mockPdpResponse(String decision) {
+        Response pdpResponse = new Response();
+        pdpResponse.setDecision(decision);
         return pdpResponse;
     }
 
-    protected void setExpectedPdpResponse(PDPResponse pdpResponse) throws JsonProcessingException {
+    protected void setExpectedPdpResponse(Response pdpResponse) throws JsonProcessingException {
         String responseInString = objectMapper.writeValueAsString(pdpResponse);
         this.server.expect(requestTo(configuration.getAuthorizeEndpoint()))
             .andExpect(method(HttpMethod.POST))

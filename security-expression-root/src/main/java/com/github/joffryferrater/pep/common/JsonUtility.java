@@ -1,10 +1,9 @@
 package com.github.joffryferrater.pep.common;
 
-import com.github.joffryferrater.response.PDPResponse;
-import java.io.IOException;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.joffryferrater.response.Response;
+import java.io.IOException;
 
 public class JsonUtility {
 
@@ -13,11 +12,12 @@ public class JsonUtility {
     private JsonUtility(){}
 
     static {
+        pdpResponseReader.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true);
         pdpResponseReader.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         pdpResponseReader.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    static PDPResponse getPDPResponse(String responseBody) throws IOException {
-        return pdpResponseReader.readValue(responseBody, PDPResponse.class);
+    public static Response getPDPResponse(String responseBody) throws IOException {
+        return pdpResponseReader.readValue(responseBody, Response.class);
     }
 }

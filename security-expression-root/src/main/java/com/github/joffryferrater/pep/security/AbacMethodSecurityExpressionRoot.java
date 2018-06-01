@@ -8,10 +8,8 @@ import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.PDPRequest;
 import com.github.joffryferrater.request.Request;
 import com.github.joffryferrater.request.ResourceCategory;
-import com.github.joffryferrater.response.PDPResponse;
 import com.github.joffryferrater.response.Response;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +42,10 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         LOGGER.debug("Entering hasAccessToResource(attributeId={},values={}", attributeId, values);
         final PDPRequest pdpRequest = getAllCategoriesRequest(attributeId, values);
         try {
-            final PDPResponse pdpResponse = pdpClient.sendXacmlJsonRequest(pdpRequest);
+            final Response pdpResponse = pdpClient.sendXacmlJsonRequest(pdpRequest);
             return isPermitted(pdpResponse);
-        } catch (URISyntaxException | MalformedURLException e) {
-            LOGGER.error("Exception occurs on sending request to PDP server", e);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
         }
         return false;
     }
@@ -61,8 +59,7 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
     }
 
 
-    private boolean isPermitted(PDPResponse pdpResponse) {
-        final Response response = pdpResponse.getResponse();
+    private boolean isPermitted(Response response) {
         final boolean isPermitted = "Permit".equals(response.getDecision());
         LOGGER.debug("isPermitted: {}", isPermitted);
         return isPermitted;
