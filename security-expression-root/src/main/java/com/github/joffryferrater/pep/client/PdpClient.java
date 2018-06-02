@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,12 +21,11 @@ public class PdpClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(PdpClient.class);
 
     private final RestTemplate restTemplate;
-    @Autowired
     private PdpConfiguration pdpConfiguration;
 
-    @Autowired
-    public PdpClient(RestTemplateBuilder restTemplateBuilder) {
+    public PdpClient(RestTemplateBuilder restTemplateBuilder, PdpConfiguration pdpConfiguration) {
         this.restTemplate = restTemplateBuilder.build();
+        this.pdpConfiguration = pdpConfiguration;
     }
 
     public Response sendXacmlJsonRequest(PDPRequest pdpRequest)
