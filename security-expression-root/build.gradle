@@ -24,6 +24,7 @@ plugins {
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'maven-publish'
 
 dependencies {
     compile project(":xacml-resource-models")
@@ -41,11 +42,14 @@ dependencies {
 compileJava.dependsOn(processResources)
 
 jar{
-    enabled = true
+    classifier = 'default'
 }
+
 mainClassName = 'com.github.joffryferrater.pep.PepApplication'
+version = "0.0.1"
 
 shadowJar {
+    classifier = null
     baseName = 'abac-spring-security'
     archiveName = "${baseName}-${version}.jar"
     mergeServiceFiles()
@@ -62,13 +66,11 @@ shadowJar {
     }
 }
 
-apply plugin: 'maven-publish'
 publishing {
     publications {
         jar(MavenPublication) {
             groupId 'com.github.joffryferrater'
             artifactId 'abac-spring-security'
-            from components.java
             artifact shadowJar
         }
     }
