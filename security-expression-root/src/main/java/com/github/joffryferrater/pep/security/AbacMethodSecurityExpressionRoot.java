@@ -11,6 +11,7 @@ import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.response.Response;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -77,10 +78,14 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
     }
 
     private void addCategoriesToRequest(Request request) {
-        request.addAccessSubjectCategory(addAccessSubjectCategoryRequest());
-        request.addActionCategory(addActionCategoryRequest());
-        request.addEnvironmentCategory(addEnvironmentCategoryRequest());
-        request.addResourceCategory(addResourceCategoryRequest());
+        Optional<AccessSubjectCategory> optionalAccessSubjectCategory = addAccessSubjectCategoryRequest();
+        optionalAccessSubjectCategory.ifPresent(request::addAccessSubjectCategory);
+        Optional<ActionCategory> optionalActionCategory = addActionCategoryRequest();
+        optionalActionCategory.ifPresent(request::addActionCategory);
+        Optional<EnvironmentCategory> optionalEnvironmentCategory = addEnvironmentCategoryRequest();
+        optionalEnvironmentCategory.ifPresent(request::addEnvironmentCategory);
+        Optional<ResourceCategory> optionalResourceCategory = addResourceCategoryRequest();
+        optionalResourceCategory.ifPresent(request::addResourceCategory);
     }
 
     @Override
@@ -108,19 +113,19 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         return this;
     }
 
-    protected AccessSubjectCategory addAccessSubjectCategoryRequest() {
-        return new AccessSubjectCategory();
+    protected Optional<AccessSubjectCategory> addAccessSubjectCategoryRequest() {
+        return Optional.empty();
     }
 
-    protected ActionCategory addActionCategoryRequest() {
-        return new ActionCategory();
+    protected Optional<ActionCategory> addActionCategoryRequest() {
+        return Optional.empty();
     }
 
-    protected EnvironmentCategory addEnvironmentCategoryRequest() {
-        return new EnvironmentCategory();
+    protected Optional<EnvironmentCategory> addEnvironmentCategoryRequest() {
+        return Optional.empty();
     }
 
-    protected ResourceCategory addResourceCategoryRequest() {
-        return new ResourceCategory();
+    protected Optional<ResourceCategory> addResourceCategoryRequest() {
+        return Optional.empty();
     }
 }
