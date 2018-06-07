@@ -60,7 +60,7 @@ public class MyMethodSecurityExpressionRoot extends AbacMethodSecurityExpression
     }
 
     @Override
-    protected AccessSubjectCategory addAccessSubjectCategoryRequest() {
+    protected Optional<AccessSubjectCategory> addAccessSubjectCategoryRequest() {
         // Sends the current user as access subject id attribute
         AccessSubjectCategory accessSubjectCategory = new AccessSubjectCategory();
         Attribute attribute = new Attribute();
@@ -68,7 +68,7 @@ public class MyMethodSecurityExpressionRoot extends AbacMethodSecurityExpression
         final String currentUser =  SecurityContextHolder.getContext().getAuthentication().getName();
         attribute.setValue(Collections.singletonList(currentUser));
         accessSubjectCategory.withAttributes(attribute);
-        return accessSubjectCategory;
+        return Optional.of(accessSubjectCategory);
     }
 }
 
