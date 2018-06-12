@@ -5,9 +5,12 @@ The project, Attribute Based Access Control for Spring Security, provides a cust
 ````
 {
 	"Request": {
-		"Resource": {
-			"Attribute": []
-		}
+		"Resource": [{
+			"Attribute": {
+				"AttributeId": "<some attribute id>",
+				"Value": ["<some values>"]
+			}
+		}]
 	}
 }
 ````
@@ -77,12 +80,18 @@ By overriding the ``addAccessSubjectCategory`` in the above example, the method 
 ````
 {
 	"Request": {
-		"Resource": {
-			"Attribute": []
-		},
-                "AccessSubject": {
-			"Attribute": []
-		}
+		"Resource": [{
+			"Attribute": {
+				"AttributeId": "Attributes.resource.endpoint",
+				"Value": ["helloWorld"]
+			}
+		}],
+		"AccessSubject": [{
+			"Attribute": {
+				"AttributeId": "urn:oasis:names:tc:xacml:1.0:subject:subject-id",
+				"Value": ["pdp-user"]
+			}
+		}]
 	}
 }
 ````
