@@ -1,5 +1,6 @@
 package com.github.joffryferrater.pep.security;
 
+import com.github.joffryferrater.builder.RequestBuilder;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.ActionCategory;
@@ -52,11 +53,10 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
     }
 
     private PDPRequest getAllCategoriesRequest(String attributeId, List<Object> values) {
-        Request request = createResourceCategoryRequest(attributeId, values);
-        addCategoriesToRequest(request);
-        PDPRequest pdpRequest = new PDPRequest();
-        pdpRequest.setRequest(request);
-        return pdpRequest;
+        RequestBuilder requestBuilder = buildRequest();
+        ResourceCategory resourceCategory = createResourceCategoryRequest(attributeId, values);
+        requestBuilder.addResourceCategory(resourceCategory);
+        return requestBuilder.build();
     }
 
 
@@ -66,26 +66,41 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         return isPermitted;
     }
 
-    private Request createResourceCategoryRequest(String attributeId, List<Object> values) {
+    private ResourceCategory createResourceCategoryRequest(String attributeId, List<Object> values) {
         Attribute attribute = new Attribute();
         attribute.setAttributeId(attributeId);
         attribute.setValue(values);
-        ResourceCategory resource = new ResourceCategory();
-        resource.addAttribute(attribute);
-        Request request = new Request();
-        request.addResourceCategory(resource);
-        return request;
+        ResourceCategory resourceCategory = new ResourceCategory();
+        resourceCategory.addAttribute(attribute);
+        return resourceCategory;
     }
 
-    private void addCategoriesToRequest(Request request) {
+    private RequestBuilder buildRequest() {
+        AccessSubjectCategory accessSubjectCategory = getAccessSubjectCategory();
+        ActionCategory actionCategory = getActionCategory();
+        ResourceCategory resourceCategory = getResourceCategory();
+        EnvironmentCategory environmentCategory = getEnvironmentCategory();
+        return new RequestBuilder(accessSubjectCategory, actionCategory, resourceCategory, environmentCategory);
+    }
+
+    private AccessSubjectCategory getAccessSubjectCategory() {
         Optional<AccessSubjectCategory> optionalAccessSubjectCategory = addAccessSubjectCategoryRequest();
-        optionalAccessSubjectCategory.ifPresent(request::addAccessSubjectCategory);
+        return optionalAccessSubjectCategory.orElse(new AccessSubjectCategory());
+    }
+
+    private ActionCategory getActionCategory() {
         Optional<ActionCategory> optionalActionCategory = addActionCategoryRequest();
-        optionalActionCategory.ifPresent(request::addActionCategory);
-        Optional<EnvironmentCategory> optionalEnvironmentCategory = addEnvironmentCategoryRequest();
-        optionalEnvironmentCategory.ifPresent(request::addEnvironmentCategory);
+        return  optionalActionCategory.orElse(new ActionCategory());
+    }
+
+    private ResourceCategory getResourceCategory() {
         Optional<ResourceCategory> optionalResourceCategory = addResourceCategoryRequest();
-        optionalResourceCategory.ifPresent(request::addResourceCategory);
+        return optionalResourceCategory.orElse(new ResourceCategory());
+    }
+
+    private  EnvironmentCategory getEnvironmentCategory() {
+        Optional<EnvironmentCategory> optionalEnvironmentCategory = addEnvironmentCategoryRequest();
+        return  optionalEnvironmentCategory.orElse(new EnvironmentCategory());
     }
 
     @Override

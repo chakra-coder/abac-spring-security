@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.joffryferrater.builder.RequestBuilder;
 import com.github.joffryferrater.pep.TestBase;
+import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.PDPRequest;
 import com.github.joffryferrater.response.Response;
 import java.io.IOException;
@@ -34,7 +36,8 @@ public class PdpClientTest extends TestBase {
 
     @Test
     public void shouldReturnPdpResponse() throws IOException {
-        PDPRequest pdpRequest = new PDPRequest();
+        RequestBuilder requestBuilder = new RequestBuilder(new AccessSubjectCategory());
+        PDPRequest pdpRequest = requestBuilder.build();
         Response response = target.sendXacmlJsonRequest(pdpRequest);
 
         assertThat(response.getDecision(), is("Permit"));

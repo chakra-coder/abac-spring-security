@@ -11,23 +11,16 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class PDPRequest {
 
 	@JsonProperty("Request")
-	private Request request;;
+	private final Request request;;
 
-	@JsonProperty("Request")
+	public PDPRequest(Request request) {
+		this.request = request;
+	}
+
 	public Request getRequest() {
 		return request;
 	}
 
-	@JsonProperty("Request")
-	public void setRequest(Request request) {
-		this.request = request;
-	}
-
-	public PDPRequest withRequest(Request request) {
-		this.request = request;
-		return this;
-	}
-	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(request).toHashCode();
