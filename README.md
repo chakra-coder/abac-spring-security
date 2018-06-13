@@ -1,6 +1,12 @@
 # Attribute Based Access Control for Spring Security
 
-The project, Attribute Based Access Control for Spring Security, provides a custom method security expression with Spring Security. The expression is called ``hasAccessToResource('<attribute id>', <{values}>)`` which can be used with ``@PreAuthorize`` and ``@PostAuthorize`` depending on your global method security configuration. The ``hasAccessToResource`` sends an XACML request in JSON to a PDP server (externalized authorization server, more info at https://www.axiomatics.com/). The JSON request is a Resource Category object representation as shown in the example below. See the "The Category object representation" in the XACML JSON Profile Specification: See http://docs.oasis-open.org/xacml/xacml-json-http/v1.0/cos01/xacml-json-http-v1.0-cos01.html#_Toc497727084
+The project, Attribute Based Access Control for Spring Security, provides custom web and method security expressions for ABAC. The expressions are: <br>
+ * ``hasAccessToResource('<attribute id>', <{values}>)`` <br>
+    This expression can be used with ``@PreAuthorize`` and ``@PostAuthorize`` depending on your global method security configuration. <br> 
+ * ``hasAccessToPath('<attribute id>', <{values}>)`` <br>
+    This expression can be used as web expression for securing HTTP path. <br>
+    
+The ``hasAccessToResource`` and ``hasAccessToPath`` send an XACML request in JSON to a PDP server (externalized authorization server, more info at https://www.axiomatics.com/). The JSON request is a Resource Category object representation as shown in the example below. See the "The Category object representation" in the XACML JSON Profile Specification: See http://docs.oasis-open.org/xacml/xacml-json-http/v1.0/cos01/xacml-json-http-v1.0-cos01.html#_Toc497727084 <br>
 
 ````
 {
@@ -14,6 +20,8 @@ The project, Attribute Based Access Control for Spring Security, provides a cust
 	}
 }
 ````
+
+#### Method Security Expression (hasAccessToResource)
 Sample usage of ``hasAccessToResource``: 
 ```
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -95,5 +103,6 @@ By overriding the ``addAccessSubjectCategory`` in the above example, the method 
 	}
 }
 ````
-
-## See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security 
+#### Web Security Expression (hasAccessToPath)
+ - documentation to follow
+##### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security 
