@@ -43,9 +43,7 @@ public class PdpClient {
         headers.add("Content-Type", "application/xacml+json");
         headers.add("Accept", "application/json");
         final Optional<String> base64EncodedCredentials = getBase64EncodedCredentials();
-        if (base64EncodedCredentials.isPresent()) {
-            headers.add("Authorization", "Basic " + base64EncodedCredentials.get());
-        }
+        base64EncodedCredentials.ifPresent(credentials -> headers.add("Authorization", "Basic " + credentials));
         return headers;
     }
 

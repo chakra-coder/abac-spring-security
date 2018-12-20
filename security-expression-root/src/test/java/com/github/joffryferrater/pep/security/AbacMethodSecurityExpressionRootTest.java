@@ -12,7 +12,6 @@ import com.github.joffryferrater.request.Attribute;
 import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.response.Response;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +30,7 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
     PdpClient pdpClient;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         target = new AbacMethodSecurityExpressionRoot(new AuthenticationImpl(), pdpClient) {
 
             @Override
@@ -40,43 +39,43 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
             }
 
             @Override
-            protected Optional<AccessSubjectCategory> addAccessSubjectCategoryRequest() {
+            protected Optional<List<AccessSubjectCategory>> addAccessSubjectCategoryRequest() {
                 AccessSubjectCategory accessSubject = new AccessSubjectCategory();
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("access-subject-id");
                 attribute.setValue(Collections.singletonList("Joffry"));
                 accessSubject.setAttributes(Collections.singletonList(attribute));
-                return Optional.of(accessSubject);
+                return Optional.of(Collections.singletonList(accessSubject));
             }
 
             @Override
-            protected Optional<ActionCategory> addActionCategoryRequest() {
+            protected Optional<List<ActionCategory>> addActionCategoryRequest() {
                 ActionCategory actionCategory = new ActionCategory();
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("action-id");
                 attribute.setValue(Collections.singletonList("GET"));
                 actionCategory.setAttributes(Collections.singletonList(attribute));
-                return Optional.of(actionCategory);
+                return Optional.of(Collections.singletonList(actionCategory));
             }
 
             @Override
-            protected Optional<EnvironmentCategory> addEnvironmentCategoryRequest() {
+            protected Optional<List<EnvironmentCategory>> addEnvironmentCategoryRequest() {
                 EnvironmentCategory environmentCategory = new EnvironmentCategory();
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("environment-id");
                 attribute.setValue(Collections.singletonList("environment-value"));
                 environmentCategory.setAttributes(Collections.singletonList(attribute));
-                return Optional.of(environmentCategory);
+                return Optional.of(Collections.singletonList(environmentCategory));
             }
 
             @Override
-            protected Optional<ResourceCategory> addResourceCategoryRequest() {
+            protected Optional<List<ResourceCategory>> addResourceCategoryRequest() {
                 ResourceCategory resourceCategory = new ResourceCategory();
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("resource-id");
                 attribute.setValue(Collections.singletonList("resource-value"));
                 resourceCategory.setAttributes(Collections.singletonList(attribute));
-                return Optional.of(resourceCategory);
+                return Optional.of(Collections.singletonList(resourceCategory));
             }
         };
     }
@@ -92,8 +91,11 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
 
     @Test
     public void shouldVerifyListOfAccessSubjectAttributes() {
-        Optional<AccessSubjectCategory> accessSubject = target.addAccessSubjectCategoryRequest();
-        List<Attribute> attributes = accessSubject.orElse(new AccessSubjectCategory()).getAttributes();
+        Optional<List<AccessSubjectCategory>> optionalAccessSubjectCategories = target
+            .addAccessSubjectCategoryRequest();
+        assertThat(optionalAccessSubjectCategories.isPresent(), is(true));
+        List<AccessSubjectCategory> accessSubjectCategories = optionalAccessSubjectCategories.get();
+        List<Attribute> attributes = accessSubjectCategories.get(0).getAttributes();
         assertThat(attributes.size(), is(1));
 
         Attribute attribute = attributes.get(0);
@@ -104,8 +106,10 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
 
     @Test
     public void shouldVerifyListOfActionAttributes() {
-        Optional<ActionCategory> actionCategory = target.addActionCategoryRequest();
-        List<Attribute> attributes = actionCategory.orElse(new ActionCategory()).getAttributes();
+        Optional<List<ActionCategory>> optionalActionCategories = target.addActionCategoryRequest();
+        assertThat(optionalActionCategories.isPresent(), is(true));
+        List<ActionCategory> actionCategories = optionalActionCategories.get();
+        List<Attribute> attributes = actionCategories.get(0).getAttributes();
         assertThat(attributes.size(), is(1));
 
         Attribute attribute = attributes.get(0);
@@ -116,8 +120,10 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
 
     @Test
     public void shouldVerifyListOfEnvironmentAttributes() {
-        Optional<EnvironmentCategory> environmentCategory = target.addEnvironmentCategoryRequest();
-        List<Attribute> attributes = environmentCategory.orElse(new EnvironmentCategory()).getAttributes();
+        Optional<List<EnvironmentCategory>> optionalEnvironmentCategories = target.addEnvironmentCategoryRequest();
+        assertThat(optionalEnvironmentCategories.isPresent(), is(true));
+        List<EnvironmentCategory> environmentCategories = optionalEnvironmentCategories.get();
+        List<Attribute> attributes = environmentCategories.get(0).getAttributes();
         assertThat(attributes.size(), is(1));
 
         Attribute attribute = attributes.get(0);
@@ -128,8 +134,10 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
 
     @Test
     public void shouldVerifyListOfResourceAttributes() {
-        Optional<ResourceCategory> resourceCategory = target.addResourceCategoryRequest();
-        List<Attribute> attributes = resourceCategory.orElse(new ResourceCategory()).getAttributes();
+        Optional<List<ResourceCategory>> optionalResourceCategories = target.addResourceCategoryRequest();
+        assertThat(optionalResourceCategories.isPresent(), is(true));
+        List<ResourceCategory> resourceCategories = optionalResourceCategories.get();
+        List<Attribute> attributes = resourceCategories.get(0).getAttributes();
         assertThat(attributes.size(), is(1));
 
         Attribute attribute = attributes.get(0);

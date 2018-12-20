@@ -46,7 +46,7 @@ jar{
 }
 
 mainClassName = 'com.github.joffryferrater.pep.PepApplication'
-version = "0.0.1"
+version = "0.2.1"
 
 shadowJar {
     classifier = null

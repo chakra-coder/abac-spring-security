@@ -10,7 +10,7 @@ import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -55,9 +55,18 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
 
     private Request getAllCategoriesRequest(String attributeId, List<Object> values) {
         ResourceCategory resourceCategory = createResourceCategoryRequest(attributeId, values);
-        List<ResourceCategory> resourceCategories = Arrays.asList(resourceCategory);
         Request request = new Request();
+        List<ResourceCategory> resourceCategories = new ArrayList<>();
+        resourceCategories.add(resourceCategory);
+        final Optional<List<AccessSubjectCategory>> accessSubjectCategories = addAccessSubjectCategoryRequest();
+        accessSubjectCategories.ifPresent(request::setAccessSubjectCategory);
+        final Optional<List<ResourceCategory>> optionalResourceCategories = addResourceCategoryRequest();
+        optionalResourceCategories.ifPresent(resourceCategories::addAll);
         request.setResourceCategory(resourceCategories);
+        final Optional<List<ActionCategory>> actionCategories = addActionCategoryRequest();
+        actionCategories.ifPresent(request::setActionCategory);
+        final Optional<List<EnvironmentCategory>> environmentCategories = addEnvironmentCategoryRequest();
+        environmentCategories.ifPresent(request::setEnvironmentCategory);
         return request;
     }
 
@@ -75,26 +84,6 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         ResourceCategory resourceCategory = new ResourceCategory();
         resourceCategory.setAttributes(Collections.singletonList(attribute));
         return resourceCategory;
-    }
-
-    private AccessSubjectCategory getAccessSubjectCategory() {
-        Optional<AccessSubjectCategory> optionalAccessSubjectCategory = addAccessSubjectCategoryRequest();
-        return optionalAccessSubjectCategory.orElse(new AccessSubjectCategory());
-    }
-
-    private ActionCategory getActionCategory() {
-        Optional<ActionCategory> optionalActionCategory = addActionCategoryRequest();
-        return  optionalActionCategory.orElse(new ActionCategory());
-    }
-
-    private ResourceCategory getResourceCategory() {
-        Optional<ResourceCategory> optionalResourceCategory = addResourceCategoryRequest();
-        return optionalResourceCategory.orElse(new ResourceCategory());
-    }
-
-    private  EnvironmentCategory getEnvironmentCategory() {
-        Optional<EnvironmentCategory> optionalEnvironmentCategory = addEnvironmentCategoryRequest();
-        return  optionalEnvironmentCategory.orElse(new EnvironmentCategory());
     }
 
     @Override
@@ -122,19 +111,19 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         return this;
     }
 
-    protected Optional<AccessSubjectCategory> addAccessSubjectCategoryRequest() {
+    protected Optional<List<AccessSubjectCategory>> addAccessSubjectCategoryRequest() {
         return Optional.empty();
     }
 
-    protected Optional<ActionCategory> addActionCategoryRequest() {
+    protected Optional<List<ActionCategory>> addActionCategoryRequest() {
         return Optional.empty();
     }
 
-    protected Optional<EnvironmentCategory> addEnvironmentCategoryRequest() {
+    protected Optional<List<EnvironmentCategory>> addEnvironmentCategoryRequest() {
         return Optional.empty();
     }
 
-    protected Optional<ResourceCategory> addResourceCategoryRequest() {
+    protected Optional<List<ResourceCategory>> addResourceCategoryRequest() {
         return Optional.empty();
     }
 }
