@@ -12,6 +12,7 @@ import com.github.joffryferrater.request.Attribute;
 import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.response.Response;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("access-subject-id");
                 attribute.setValue(Collections.singletonList("Joffry"));
-                accessSubject.withAttributes(attribute);
+                accessSubject.setAttributes(Collections.singletonList(attribute));
                 return Optional.of(accessSubject);
             }
 
@@ -54,7 +55,7 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("action-id");
                 attribute.setValue(Collections.singletonList("GET"));
-                actionCategory.withAttributes(attribute);
+                actionCategory.setAttributes(Collections.singletonList(attribute));
                 return Optional.of(actionCategory);
             }
 
@@ -64,7 +65,7 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("environment-id");
                 attribute.setValue(Collections.singletonList("environment-value"));
-                environmentCategory.withAttributes(attribute);
+                environmentCategory.setAttributes(Collections.singletonList(attribute));
                 return Optional.of(environmentCategory);
             }
 
@@ -74,7 +75,7 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
                 final Attribute attribute = new Attribute();
                 attribute.setAttributeId("resource-id");
                 attribute.setValue(Collections.singletonList("resource-value"));
-                resourceCategory.withAttributes(attribute);
+                resourceCategory.setAttributes(Collections.singletonList(attribute));
                 return Optional.of(resourceCategory);
             }
         };

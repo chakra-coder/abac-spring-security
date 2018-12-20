@@ -5,12 +5,16 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.joffryferrater.builder.RequestBuilder;
 import com.github.joffryferrater.pep.TestBase;
 import com.github.joffryferrater.request.AccessSubjectCategory;
-import com.github.joffryferrater.request.PDPRequest;
+import com.github.joffryferrater.request.Attribute;
+import com.github.joffryferrater.request.Request;
+import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,9 +40,16 @@ public class PdpClientTest extends TestBase {
 
     @Test
     public void shouldReturnPdpResponse() throws IOException {
-        RequestBuilder requestBuilder = new RequestBuilder(new AccessSubjectCategory());
-        PDPRequest pdpRequest = requestBuilder.build();
-        Response response = target.sendXacmlJsonRequest(pdpRequest);
+        Request request = new Request();
+        List<AccessSubjectCategory> accessSubjectCategoryList = new ArrayList<>();
+        AccessSubjectCategory accessSubject = new AccessSubjectCategory();
+        final Attribute attribute = new Attribute();
+        attribute.setAttributeId("access-subject-id");
+        attribute.setValue(Collections.singletonList("Joffry"));
+        accessSubject.setAttributes(Collections.singletonList(attribute));
+        accessSubjectCategoryList.add(accessSubject);
+        request.setAccessSubjectCategory(accessSubjectCategoryList);
+        Response response = target.sendXacmlJsonRequest(new XacmlRequest(request));
 
         assertThat(response.getDecision(), is("Permit"));
     }

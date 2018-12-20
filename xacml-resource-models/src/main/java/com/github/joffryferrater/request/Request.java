@@ -1,54 +1,68 @@
 package com.github.joffryferrater.request;
 
+import static com.github.joffryferrater.request.Constants.ACCESS_SUBJECT;
+import static com.github.joffryferrater.request.Constants.ACTION;
+import static com.github.joffryferrater.request.Constants.ENVIRONMENT;
+import static com.github.joffryferrater.request.Constants.RESOURCE;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.ArrayList;
+import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_EMPTY)
 @JsonPropertyOrder({
-	"AccessSubject",
-	"Action",
-	"Resource",
-	"Environment"
+    ACCESS_SUBJECT,
+    ACTION,
+    RESOURCE,
+    ENVIRONMENT
 })
 public class Request {
 
-	@JsonProperty("AccessSubject")
-	private AccessSubjectCategory accessSubjectCategory;
+    @JsonProperty(ACCESS_SUBJECT)
+    private List<AccessSubjectCategory> accessSubjectCategory = new ArrayList<>();
 
-	@JsonProperty("Action")
-	private ActionCategory actionCategory;
-	
-	@JsonProperty("Environment")
-	private EnvironmentCategory environmentCategory;
-	
-	@JsonProperty("Resource")
-	private ResourceCategory resourceCategory;
+    @JsonProperty(ACTION)
+    private List<ActionCategory> actionCategory = new ArrayList<>();
 
-	public Request(AccessSubjectCategory accessSubjectCategory,
-		ActionCategory actionCategory, EnvironmentCategory environmentCategory,
-		ResourceCategory resourceCategory) {
-		this.accessSubjectCategory = accessSubjectCategory;
-		this.actionCategory = actionCategory;
-		this.environmentCategory = environmentCategory;
-		this.resourceCategory = resourceCategory;
-	}
+    @JsonProperty(RESOURCE)
+    private List<EnvironmentCategory> environmentCategory = new ArrayList<>();
 
-	public AccessSubjectCategory getAccessSubjectCategory() {
-		return accessSubjectCategory;
-	}
+    @JsonProperty(ENVIRONMENT)
+    private List<ResourceCategory> resourceCategory = new ArrayList<>();
 
-	public ActionCategory getActionCategory() {
-		return actionCategory;
-	}
+    public List<AccessSubjectCategory> getAccessSubjectCategory() {
+        return accessSubjectCategory;
+    }
 
-	public EnvironmentCategory getEnvironmentCategory() {
-		return environmentCategory;
-	}
+    public void setAccessSubjectCategory(
+        List<AccessSubjectCategory> accessSubjectCategory) {
+        this.accessSubjectCategory = accessSubjectCategory;
+    }
 
+    public List<ActionCategory> getActionCategory() {
+        return actionCategory;
+    }
 
-	public ResourceCategory getResourceCategory() {
-		return resourceCategory;
-	}
+    public void setActionCategory(List<ActionCategory> actionCategory) {
+        this.actionCategory = actionCategory;
+    }
 
+    public List<EnvironmentCategory> getEnvironmentCategory() {
+        return environmentCategory;
+    }
+
+    public void setEnvironmentCategory(List<EnvironmentCategory> environmentCategory) {
+        this.environmentCategory = environmentCategory;
+    }
+
+    public List<ResourceCategory> getResourceCategory() {
+        return resourceCategory;
+    }
+
+    public void setResourceCategory(List<ResourceCategory> resourceCategory) {
+        this.resourceCategory = resourceCategory;
+    }
 }

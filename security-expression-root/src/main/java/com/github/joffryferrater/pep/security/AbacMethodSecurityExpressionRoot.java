@@ -1,16 +1,17 @@
 package com.github.joffryferrater.pep.security;
 
-import com.github.joffryferrater.builder.RequestBuilder;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.ActionCategory;
 import com.github.joffryferrater.request.Attribute;
 import com.github.joffryferrater.request.EnvironmentCategory;
-import com.github.joffryferrater.request.PDPRequest;
 import com.github.joffryferrater.request.Request;
 import com.github.joffryferrater.request.ResourceCategory;
+import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -42,9 +43,9 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
 
     public boolean hasAccessToResource(String attributeId, List<Object> values) {
         LOGGER.debug("Entering hasAccessToResource(attributeId={},values={}", attributeId, values);
-        final PDPRequest pdpRequest = getAllCategoriesRequest(attributeId, values);
+        final Request request = getAllCategoriesRequest(attributeId, values);
         try {
-            final Response pdpResponse = pdpClient.sendXacmlJsonRequest(pdpRequest);
+            final Response pdpResponse = pdpClient.sendXacmlJsonRequest(new XacmlRequest(request));
             return isPermitted(pdpResponse);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
@@ -52,11 +53,12 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         return false;
     }
 
-    private PDPRequest getAllCategoriesRequest(String attributeId, List<Object> values) {
-        RequestBuilder requestBuilder = buildRequest();
+    private Request getAllCategoriesRequest(String attributeId, List<Object> values) {
         ResourceCategory resourceCategory = createResourceCategoryRequest(attributeId, values);
-        requestBuilder.addResourceCategory(resourceCategory);
-        return requestBuilder.build();
+        List<ResourceCategory> resourceCategories = Arrays.asList(resourceCategory);
+        Request request = new Request();
+        request.setResourceCategory(resourceCategories);
+        return request;
     }
 
 
@@ -71,16 +73,8 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         attribute.setAttributeId(attributeId);
         attribute.setValue(values);
         ResourceCategory resourceCategory = new ResourceCategory();
-        resourceCategory.addAttribute(attribute);
+        resourceCategory.setAttributes(Collections.singletonList(attribute));
         return resourceCategory;
-    }
-
-    private RequestBuilder buildRequest() {
-        AccessSubjectCategory accessSubjectCategory = getAccessSubjectCategory();
-        ActionCategory actionCategory = getActionCategory();
-        ResourceCategory resourceCategory = getResourceCategory();
-        EnvironmentCategory environmentCategory = getEnvironmentCategory();
-        return new RequestBuilder(accessSubjectCategory, actionCategory, resourceCategory, environmentCategory);
     }
 
     private AccessSubjectCategory getAccessSubjectCategory() {

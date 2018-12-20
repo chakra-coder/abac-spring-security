@@ -2,13 +2,13 @@ package com.github.joffryferrater.pep.client;
 
 import com.github.joffryferrater.pep.common.JsonUtility;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
-import com.github.joffryferrater.request.PDPRequest;
+import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,13 +28,10 @@ public class PdpClient {
         this.pdpConfiguration = pdpConfiguration;
     }
 
-    public Response sendXacmlJsonRequest(PDPRequest pdpRequest)
+    public Response sendXacmlJsonRequest(XacmlRequest xacmlRequest)
         throws IOException {
-        LOGGER.debug("Sending pdp request : {}", pdpRequest);
         HttpHeaders headers = createHeaders();
-        HttpEntity<PDPRequest> entity = new HttpEntity<>(pdpRequest, headers);
-        LOGGER.debug("http headers: {}", entity.getHeaders());
-        LOGGER.debug("http requestBody: {}", entity.getBody());
+        HttpEntity<XacmlRequest> entity = new HttpEntity<>(xacmlRequest, headers);
         final String url = pdpConfiguration.getAuthorizeEndpoint();
         final String pdpResponse = restTemplate.postForObject(url, entity, String.class);
         LOGGER.debug("Pdp Response: {}", pdpResponse);
@@ -44,16 +41,22 @@ public class PdpClient {
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/xacml+json");
-        final String base64EncodedCredentials = getBase64EncodedCredentials();
-        headers.add("Authorization", "Basic " + base64EncodedCredentials);
+        headers.add("Accept", "application/json");
+        final Optional<String> base64EncodedCredentials = getBase64EncodedCredentials();
+        if (base64EncodedCredentials.isPresent()) {
+            headers.add("Authorization", "Basic " + base64EncodedCredentials.get());
+        }
         return headers;
     }
 
-    private String getBase64EncodedCredentials() {
+    private Optional<String> getBase64EncodedCredentials() {
         final String username = pdpConfiguration.getUsername();
         final String password = pdpConfiguration.getPassword();
-        return Base64.getEncoder()
-            .encodeToString((username + ":" + password).getBytes());
+        if (username == null || password == null) {
+            return Optional.empty();
+        }
+        return Optional.of(Base64.getEncoder()
+            .encodeToString((username + ":" + password).getBytes()));
     }
 }
 
