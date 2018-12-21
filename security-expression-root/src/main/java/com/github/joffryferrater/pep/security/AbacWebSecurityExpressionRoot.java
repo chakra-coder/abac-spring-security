@@ -51,7 +51,7 @@ public abstract class AbacWebSecurityExpressionRoot extends WebSecurityExpressio
      * @return true if current user is permitted
      */
     protected boolean isPermitted(Response response) {
-        final boolean isPermitted = "Permit".equals(response.getDecision());
+        final boolean isPermitted = "Permit".equals(response.getResults().get(0).getDecision());
         LOGGER.debug("isPermitted: {}", isPermitted);
         return isPermitted;
     }

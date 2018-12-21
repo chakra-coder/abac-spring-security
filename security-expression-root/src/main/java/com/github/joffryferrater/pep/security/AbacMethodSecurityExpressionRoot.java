@@ -72,7 +72,7 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
 
 
     private boolean isPermitted(Response response) {
-        final boolean isPermitted = "Permit".equals(response.getDecision());
+        final boolean isPermitted = "Permit".equals(response.getResults().get(0).getDecision());
         LOGGER.debug("isPermitted: {}", isPermitted);
         return isPermitted;
     }

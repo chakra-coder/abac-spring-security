@@ -11,6 +11,7 @@ import com.github.joffryferrater.request.Attribute;
 import com.github.joffryferrater.request.Request;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
+import com.github.joffryferrater.response.Result;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +30,8 @@ public class PdpClientTest extends TestBase {
 
     @Before
     public void setUp() throws JsonProcessingException {
-        Response pdpResponse = mockPdpResponse("Permit");
-        setExpectedPdpResponse(pdpResponse);
+        Result result = mockResult("Permit");
+        setExpectedPdpResponse(result);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class PdpClientTest extends TestBase {
         request.setAccessSubjectCategory(accessSubjectCategoryList);
         Response response = target.sendXacmlJsonRequest(new XacmlRequest(request));
 
-        assertThat(response.getDecision(), is("Permit"));
+        assertThat(response.getResults().get(0).getDecision(), is("Permit"));
     }
 
 }

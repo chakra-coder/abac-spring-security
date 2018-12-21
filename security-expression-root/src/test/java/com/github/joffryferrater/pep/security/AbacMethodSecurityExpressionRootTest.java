@@ -11,7 +11,7 @@ import com.github.joffryferrater.request.ActionCategory;
 import com.github.joffryferrater.request.Attribute;
 import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.ResourceCategory;
-import com.github.joffryferrater.response.Response;
+import com.github.joffryferrater.response.Result;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -82,8 +82,8 @@ public class AbacMethodSecurityExpressionRootTest extends TestBase {
 
     @Test
     public void hasAccessShouldReturnTrue() throws JsonProcessingException {
-        final Response pdpResponse = mockPdpResponse("Permit");
-        setExpectedPdpResponse(pdpResponse);
+        final Result result = mockResult("Permit");
+        setExpectedPdpResponse(result);
 
         final boolean hasAccess = target.hasAccessToResource("someAttributeId", Collections.singletonList("someValue"));
         assertThat(hasAccess, is(true));

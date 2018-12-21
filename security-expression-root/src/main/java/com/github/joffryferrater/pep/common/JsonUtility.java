@@ -18,6 +18,7 @@ public class JsonUtility {
     }
 
     public static Response getPDPResponse(String responseBody) throws IOException {
+        System.out.println(responseBody);
         return pdpResponseReader.readValue(responseBody, Response.class);
     }
 }

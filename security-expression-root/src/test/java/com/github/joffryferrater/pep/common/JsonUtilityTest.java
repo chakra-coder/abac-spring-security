@@ -14,11 +14,11 @@ public class JsonUtilityTest {
         final String responseInString = getPdpResponse();
         Response response = JsonUtility.getPDPResponse(responseInString);
 
-        assertThat(response.getDecision(), is("NotApplicable"));
+        assertThat(response.getResults().get(0).getDecision(), is("NotApplicable"));
     }
 
     private String getPdpResponse() {
-        return "[{\n"
+        return "{\"Response\":[{\n"
             + "\t\"Decision\": \"NotApplicable\",\n"
             + "\t\"Status\": {\n"
             + "\t\t\"StatusCode\": {\n"
@@ -29,6 +29,6 @@ public class JsonUtilityTest {
             + "\t\"Obligations\": [],\n"
             + "\t\"AssociatedAdvice\": [],\n"
             + "\t\"Category\": []\n"
-            + "}]";
+            + "}]}";
     }
 }

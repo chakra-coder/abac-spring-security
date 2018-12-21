@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import com.github.joffryferrater.pep.TestBase;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.response.Response;
+import com.github.joffryferrater.response.Result;
 import java.io.IOException;
 import java.util.Collections;
 import org.junit.Before;
@@ -41,8 +42,8 @@ public class AbacWebSecurityExpressionRootTest extends TestBase {
 
     @Test
     public void hasAccessToPathShouldReturnTrue() throws IOException {
-        final Response pdpResponse = mockPdpResponse("Permit");
-        setExpectedPdpResponse(pdpResponse);
+        final Result result = mockResult("Permit");
+        setExpectedPdpResponse(result);
 
         final String attributeId = "Attributes.resource.path";
         boolean hasAccessToPath = target.hasAccessToPath(attributeId, Collections.singletonList("/somePath"));

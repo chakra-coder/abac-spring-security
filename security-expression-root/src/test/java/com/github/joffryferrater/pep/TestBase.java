@@ -10,7 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.response.Response;
+import com.github.joffryferrater.response.Result;
 import java.util.Collection;
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.HttpMethod;
@@ -33,13 +35,14 @@ public class TestBase {
     @Autowired
     private ObjectMapper objectMapper;
 
-    protected Response mockPdpResponse(String decision) {
-        Response pdpResponse = new Response();
+    protected Result mockResult(String decision) {
+        Result pdpResponse = new Result();
         pdpResponse.setDecision(decision);
         return pdpResponse;
     }
 
-    protected void setExpectedPdpResponse(Response pdpResponse) throws JsonProcessingException {
+    protected void setExpectedPdpResponse(Result result) throws JsonProcessingException {
+        Response pdpResponse = new Response(Collections.singletonList(result));
         String responseInString = objectMapper.writeValueAsString(pdpResponse);
         this.server.expect(requestTo(configuration.getAuthorizeEndpoint()))
             .andExpect(method(HttpMethod.POST))
