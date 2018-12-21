@@ -1,7 +1,20 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'maven-publish'
+}
 
 dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+publishing {
+    publications {
+        jar(MavenPublication) {
+            from components.java
+        }
+    }
 }

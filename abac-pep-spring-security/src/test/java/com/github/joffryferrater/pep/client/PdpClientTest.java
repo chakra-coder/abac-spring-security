@@ -2,9 +2,9 @@ package com.github.joffryferrater.pep.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.joffryferrater.pep.PepApplication;
 import com.github.joffryferrater.pep.TestBase;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.Attribute;
@@ -20,9 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = PepApplication.class, initializers  = ConfigFileApplicationContextInitializer.class)
 public class PdpClientTest extends TestBase {
 
     @Autowired
@@ -32,11 +35,6 @@ public class PdpClientTest extends TestBase {
     public void setUp() throws JsonProcessingException {
         Result result = mockResult("Permit");
         setExpectedPdpResponse(result);
-    }
-
-    @Test
-    public void contextLoad() {
-        assertThat(target, is(notNullValue()));
     }
 
     @Test

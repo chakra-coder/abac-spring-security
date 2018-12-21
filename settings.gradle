@@ -1,4 +1,4 @@
-rootProject.name = 'xacml-pep-spring-security'
+rootProject.name = 'abac-spring-security'
 include 'xacml-resource-models'
-include 'security-expression-root'
+include 'abac-pep-spring-security'
 

@@ -1,17 +1,14 @@
 package com.github.joffryferrater.pep;
 
+import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication
+@Configuration
 public class PepApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(PepApplication.class, args);
-    }
 
     @Bean
     public RestTemplate restTemplate() {
@@ -21,6 +18,11 @@ public class PepApplication {
     @Bean
     public PdpConfiguration pdpConfiguration() {
         return new PdpConfiguration();
+    }
+
+    @Bean
+    public PdpClient pdpClient(RestTemplateBuilder restTemplateBuilder) {
+        return new PdpClient(restTemplateBuilder, pdpConfiguration());
     }
 }
 
