@@ -6,7 +6,6 @@ import com.github.joffryferrater.request.Request;
 import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
@@ -35,13 +34,8 @@ public abstract class AbacWebSecurityExpressionRoot extends WebSecurityExpressio
         Request request = new Request();
         request.setResourceCategory(resourceCategories);
         final Response response;
-        try {
-            response = pdpClient.sendXacmlJsonRequest(new XacmlRequest(request));
-            return isPermitted(response);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-        }
-        return false;
+        response = pdpClient.sendXacmlJsonRequest(new XacmlRequest(request));
+        return isPermitted(response);
     }
 
     /**
