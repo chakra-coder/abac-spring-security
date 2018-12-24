@@ -1,5 +1,6 @@
 package com.github.joffryferrater.pep.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.ActionCategory;
@@ -45,7 +46,11 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         LOGGER.debug("Entering hasAccessToResource(attributeId={},values={}", attributeId, values);
         final Request request = getAllCategoriesRequest(attributeId, values);
         try {
-            final Response pdpResponse = pdpClient.sendXacmlJsonRequest(new XacmlRequest(request));
+            final XacmlRequest xacmlRequest = new XacmlRequest(request);
+            ObjectMapper objectMapper = new ObjectMapper();
+            final String valueAsString = objectMapper.writeValueAsString(xacmlRequest);
+            LOGGER.debug(valueAsString);
+            final Response pdpResponse = pdpClient.sendXacmlJsonRequest(xacmlRequest);
             return isPermitted(pdpResponse);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
@@ -54,12 +59,10 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
     }
 
     private Request getAllCategoriesRequest(String attributeId, List<Object> values) {
-        ResourceCategory resourceCategory = createResourceCategoryRequest(attributeId, values);
         Request request = new Request();
+        ResourceCategory resourceCategory = createResourceCategoryRequest(attributeId, values);
         List<ResourceCategory> resourceCategories = new ArrayList<>();
         resourceCategories.add(resourceCategory);
-        final Optional<List<AccessSubjectCategory>> accessSubjectCategories = addAccessSubjectCategoryRequest();
-        accessSubjectCategories.ifPresent(request::setAccessSubjectCategory);
         final Optional<List<ResourceCategory>> optionalResourceCategories = addResourceCategoryRequest();
         optionalResourceCategories.ifPresent(resourceCategories::addAll);
         request.setResourceCategory(resourceCategories);
@@ -67,6 +70,8 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         actionCategories.ifPresent(request::setActionCategory);
         final Optional<List<EnvironmentCategory>> environmentCategories = addEnvironmentCategoryRequest();
         environmentCategories.ifPresent(request::setEnvironmentCategory);
+        final Optional<List<AccessSubjectCategory>> accessSubjectCategories = addAccessSubjectCategoryRequest();
+        accessSubjectCategories.ifPresent(request::setAccessSubjectCategory);
         return request;
     }
 

@@ -27,10 +27,10 @@ public class Request {
     @JsonProperty(ACTION)
     private List<ActionCategory> actionCategory = new ArrayList<>();
 
-    @JsonProperty(RESOURCE)
+    @JsonProperty(ENVIRONMENT)
     private List<EnvironmentCategory> environmentCategory = new ArrayList<>();
 
-    @JsonProperty(ENVIRONMENT)
+    @JsonProperty(RESOURCE)
     private List<ResourceCategory> resourceCategory = new ArrayList<>();
 
     public List<AccessSubjectCategory> getAccessSubjectCategory() {
@@ -39,7 +39,7 @@ public class Request {
 
     public void setAccessSubjectCategory(
         List<AccessSubjectCategory> accessSubjectCategory) {
-        this.accessSubjectCategory = accessSubjectCategory;
+        this.accessSubjectCategory = new ArrayList<>(accessSubjectCategory);
     }
 
     public List<ActionCategory> getActionCategory() {
@@ -47,7 +47,7 @@ public class Request {
     }
 
     public void setActionCategory(List<ActionCategory> actionCategory) {
-        this.actionCategory = actionCategory;
+        this.actionCategory = new ArrayList<>(actionCategory);
     }
 
     public List<EnvironmentCategory> getEnvironmentCategory() {
@@ -55,7 +55,7 @@ public class Request {
     }
 
     public void setEnvironmentCategory(List<EnvironmentCategory> environmentCategory) {
-        this.environmentCategory = environmentCategory;
+        this.environmentCategory = new ArrayList<>(environmentCategory);
     }
 
     public List<ResourceCategory> getResourceCategory() {
@@ -63,6 +63,6 @@ public class Request {
     }
 
     public void setResourceCategory(List<ResourceCategory> resourceCategory) {
-        this.resourceCategory = resourceCategory;
+        this.resourceCategory = new ArrayList<>(resourceCategory);
     }
 }
