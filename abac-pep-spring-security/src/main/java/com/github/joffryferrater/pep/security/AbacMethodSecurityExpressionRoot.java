@@ -1,6 +1,5 @@
 package com.github.joffryferrater.pep.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.ActionCategory;
@@ -10,7 +9,6 @@ import com.github.joffryferrater.request.Request;
 import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,17 +43,9 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
     public boolean hasAccessToResource(String attributeId, List<Object> values) {
         LOGGER.debug("Entering hasAccessToResource(attributeId={},values={}", attributeId, values);
         final Request request = getAllCategoriesRequest(attributeId, values);
-        try {
-            final XacmlRequest xacmlRequest = new XacmlRequest(request);
-            ObjectMapper objectMapper = new ObjectMapper();
-            final String valueAsString = objectMapper.writeValueAsString(xacmlRequest);
-            LOGGER.debug(valueAsString);
-            final Response pdpResponse = pdpClient.sendXacmlJsonRequest(xacmlRequest);
-            return isPermitted(pdpResponse);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-        }
-        return false;
+        final XacmlRequest xacmlRequest = new XacmlRequest(request);
+        final Response pdpResponse = pdpClient.sendXacmlJsonRequest(xacmlRequest);
+        return isPermitted(pdpResponse);
     }
 
     private Request getAllCategoriesRequest(String attributeId, List<Object> values) {
