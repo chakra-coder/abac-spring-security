@@ -26,16 +26,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = PepApplication.class, initializers  = ConfigFileApplicationContextInitializer.class)
-public class AbacMethodSecurityExpressionRootTest extends TestBase {
+public class AbacMethodSecurityExpressionTest extends TestBase {
 
-    private AbacMethodSecurityExpressionRoot target;
+    private AbacMethodSecurityExpression target;
 
     @Autowired
     PdpClient pdpClient;
 
     @Before
     public void setUp() {
-        target = new AbacMethodSecurityExpressionRoot(new AuthenticationImpl(), pdpClient) {
+        target = new AbacMethodSecurityExpression(pdpClient) {
 
             @Override
             public boolean hasAccessToResource(String attributeId, List<Object> values) {

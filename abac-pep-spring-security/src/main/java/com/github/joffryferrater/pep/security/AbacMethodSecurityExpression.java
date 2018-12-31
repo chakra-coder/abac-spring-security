@@ -15,28 +15,14 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.expression.SecurityExpressionRoot;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
-import org.springframework.security.core.Authentication;
 
-public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressionRoot implements
-    MethodSecurityExpressionOperations {
+public abstract class AbacMethodSecurityExpression {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbacMethodSecurityExpressionRoot.class);
-
-    private Object filterObject;
-    private Object returnObject;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbacMethodSecurityExpression.class);
 
     private PdpClient pdpClient;
 
-    /**
-     * Creates a new instance
-     *
-     * @param authentication the {@link Authentication} to use. Cannot be null.
-     * @param pdpClient the {@link PdpClient}
-     */
-    public AbacMethodSecurityExpressionRoot(Authentication authentication, PdpClient pdpClient) {
-        super(authentication);
+    public AbacMethodSecurityExpression(PdpClient pdpClient) {
         this.pdpClient = pdpClient;
     }
 
@@ -65,7 +51,6 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         return request;
     }
 
-
     private boolean isPermitted(Response response) {
         final boolean isPermitted = "Permit".equals(response.getResults().get(0).getDecision());
         LOGGER.debug("isPermitted: {}", isPermitted);
@@ -79,31 +64,6 @@ public abstract class AbacMethodSecurityExpressionRoot extends SecurityExpressio
         ResourceCategory resourceCategory = new ResourceCategory();
         resourceCategory.setAttributes(Collections.singletonList(attribute));
         return resourceCategory;
-    }
-
-    @Override
-    public void setFilterObject(Object filterObject) {
-        this.filterObject = filterObject;
-    }
-
-    @Override
-    public Object getFilterObject() {
-        return filterObject;
-    }
-
-    @Override
-    public void setReturnObject(Object returnObject) {
-        this.returnObject = returnObject;
-    }
-
-    @Override
-    public Object getReturnObject() {
-        return returnObject;
-    }
-
-    @Override
-    public Object getThis() {
-        return this;
     }
 
     protected Optional<List<AccessSubjectCategory>> addAccessSubjectCategoryRequest() {
