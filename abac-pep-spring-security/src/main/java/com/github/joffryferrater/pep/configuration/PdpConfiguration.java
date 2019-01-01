@@ -10,6 +10,15 @@ public class PdpConfiguration {
 	private String authorizeEndpoint;
 	private String username;
 	private String password;
+	private boolean printAuthorizationRequest;
+
+	public boolean isPrintAuthorizationRequest() {
+		return printAuthorizationRequest;
+	}
+
+	public void setPrintAuthorizationRequest(boolean printAuthorizationRequest) {
+		this.printAuthorizationRequest = printAuthorizationRequest;
+	}
 
 	public String getUsername() {
 		return username;

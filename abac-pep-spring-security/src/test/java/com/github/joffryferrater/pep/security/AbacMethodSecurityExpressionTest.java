@@ -1,15 +1,18 @@
 package com.github.joffryferrater.pep.security;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.joffryferrater.pep.PepApplication;
+import com.github.joffryferrater.pep.PepConfiguration;
 import com.github.joffryferrater.pep.TestBase;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
+import com.github.joffryferrater.request.ActionCategory;
 import com.github.joffryferrater.request.Attribute;
 import com.github.joffryferrater.request.Category;
+import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.response.Result;
 import java.util.Collections;
@@ -22,7 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = PepApplication.class, initializers  = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = PepConfiguration.class, initializers  = ConfigFileApplicationContextInitializer.class)
 public class AbacMethodSecurityExpressionTest extends TestBase {
 
     private AbacMethodSecurityExpression target;
@@ -42,6 +45,39 @@ public class AbacMethodSecurityExpressionTest extends TestBase {
 
         final boolean result = target.evaluate(categories());
         assertThat(result, is(true));
+    }
+
+    @Test
+    public void shouldReturnAccessSubjectCategoryWithOneAttribute() {
+        final AccessSubjectCategory result = target
+            .accessSubjectAttribute("id", Collections.singletonList("value"));
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getAttributes().size(), is(1));
+    }
+
+    @Test
+    public void shouldReturnResourceCategoryWithOneAttribute() {
+        final ResourceCategory result = target.resourceAttribute("id", Collections.singletonList("value"));
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getAttributes().size(), is(1));
+    }
+
+    @Test
+    public void shouldReturnActionCategoryWithOneAttribute() {
+        final ActionCategory result = target.actionAttribute("id", Collections.singletonList("value"));
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getAttributes().size(), is(1));
+    }
+
+    @Test
+    public void shouldReturnEnvironmentCategoryWithOneAttribute() {
+        final EnvironmentCategory result = target.environmentAttribute("id", Collections.singletonList("value"));
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getAttributes().size(), is(1));
     }
 
     private Category[] categories() {

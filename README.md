@@ -1,29 +1,35 @@
 # Attribute Based Access Control for Spring Security
+The Attribute Based Access Control (ABAC)for Spring Security provides both method and web expressions to secure spring boot applications based on attributes evaluated agains a policy from a Policy Decision Point (PDP) server.
+The expression is called ``#abac.evaluate(Category ... categories)`` which send an authorization request based on Json Profile of XACML 3.0 Specification (http://docs.oasis-open.org/xacml/xacml-json-http/v1.0/xacml-json-http-v1.0.html)
+The argument is an array of Category objects.
 
-The project, Attribute Based Access Control for Spring Security, provides custom web and method security expressions for ABAC. The expressions are: <br>
- * ``hasAccessToResource('<attribute id>', <{values}>)`` <br>
-    This expression can be used with ``@PreAuthorize`` and ``@PostAuthorize`` depending on your global method security configuration. <br> 
- * ``hasAccessToPath('<attribute id>', <{values}>)`` <br>
-    This expression can be used as web expression for securing HTTP path. <br>
-    
-The ``hasAccessToResource`` and ``hasAccessToPath`` send an XACML request in JSON to a PDP server (externalized authorization server, more info at https://www.axiomatics.com/). The JSON request is a Resource Category object representation as shown in the example below. See the "The Category object representation" in the XACML JSON Profile Specification: See http://docs.oasis-open.org/xacml/xacml-json-http/v1.0/cos01/xacml-json-http-v1.0-cos01.html#_Toc497727084 <br>
+## How to use
+1. Build and publish this project to maven local: ``$ ./gradlew clean build publishToMavenLocal``
+2. Add the published artifacts from maven local to your spring boot project dependency. Example for gradle project:
+   	``compile('com.github.joffryferrater:abac-pep-spring-security:0.5.1')
+   	compile('com.github.joffryferrater:xacml-resource-models:0.5.1')``
+3. Create a global method security configuration class. Example below:
+````java
+import com.github.joffryferrater.pep.security.AbacMethodSecurityExpressionHandler;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 
-````
-{
-	"Request": {
-		"Resource": [{
-			"Attribute": {
-				"AttributeId": "<some attribute id>",
-				"Value": ["<some values>"]
-			}
-		}]
-	}
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+
+    @Override
+    protected MethodSecurityExpressionHandler createExpressionHandler() {
+        return new AbacMethodSecurityExpressionHandler();
+    }
 }
 ````
-
-#### Method Security Expression (hasAccessToResource)
-Sample usage of ``hasAccessToResource``: 
-```
+Here we use ``AbacMethodSecurityExpressionHandler()`` which is provided by this project in order to use the expression ``#abac.evaluate`` in ``@PreAuthorize`` annotation.<br>
+4 . Annotate the resource to be protected by ``@PreAuthorize(#abac.evaluate({<array of attributes}))``. Example below:
+````java
+import java.security.Principal;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,78 +37,44 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SampleResource {
-
+    private static final String HELLOWORLD_ACCESS = "#abac.evaluate("
+        + "{#abac.resourceAttribute('Attributes.resource.endpoint', {'helloWorld'}), "
+        + "#abac.accessSubjectAttribute('urn:oasis:names:tc:xacml:1.0:subject:subject-id', {#principal.name})})";
+    private static final String HELLOWORLD_ID_ACCESS = "#abac.evaluate("
+        + "{#abac.resourceAttribute('Attributes.resource.endpoint', {'helloWorld/'+#id})})";
+    
     @GetMapping("/helloWorld")
-    @PreAuthorize("hasAccessToResource('Attributes.resource.endpoint', { 'helloWorld' })")
-    public String printHelloWorld(){
+    @PreAuthorize(HELLOWORLD_ACCESS)
+    public String printHelloWorld(Principal principal) {
         return "hello world";
     }
 
     @GetMapping("/helloWorld/{id}")
-    @PreAuthorize("hasAccessToResource('Attributes.resource.endpoint', { 'helloWorld/'+#id })")
-    public String getHelloWorldId(@PathVariable String id){
+    @PreAuthorize(HELLOWORLD_ID_ACCESS)
+    public String getHelloWorldId(@PathVariable String id) {
         return "hello world id is: " + id;
     }
 }
-```
-
-In order to add more Categories to the request, the following methods can be overriden:
-* addAccessSubjectCategoryRequest
-* addActionCategoryRequest
-* addResourceCategoryRequest
-* addEnvironmentCategoryRequest
-* addCustomCategoryRequest (not yet implemented)
-
-The following is an example of overriding the ``addAccessSubjectCategoryRequest``. The current username is added as AccessSubject category to the request.
-```
-import com.github.joffryferrater.pep.client.PdpClient;
-import com.github.joffryferrater.pep.security.AbacMethodSecurityExpressionRoot;
-import com.github.joffryferrater.request.AccessSubjectCategory;
-import com.github.joffryferrater.request.Attribute;
-import java.util.Collections;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-public class MyMethodSecurityExpressionRoot extends AbacMethodSecurityExpressionRoot {
-
-    public MyMethodSecurityExpressionRoot(Authentication authentication,
-        PdpClient pdpClient) {
-        super(authentication, pdpClient);
-    }
-
-    @Override
-    protected Optional<AccessSubjectCategory> addAccessSubjectCategoryRequest() {
-        // Sends the current user as access subject id attribute
-        AccessSubjectCategory accessSubjectCategory = new AccessSubjectCategory();
-        Attribute attribute = new Attribute();
-        attribute.setAttributeId("urn:oasis:names:tc:xacml:1.0:subject:subject-id");
-        final String currentUser =  SecurityContextHolder.getContext().getAuthentication().getName();
-        attribute.setValue(Collections.singletonList(currentUser));
-        accessSubjectCategory.withAttributes(attribute);
-        return Optional.of(accessSubjectCategory);
-    }
-}
-
-```
-By overriding the ``addAccessSubjectCategory`` in the above example, the method security expression sends the XACML request in JSON to the PDP server in the following representation:
 ````
+In the example above, the ``/helloWorld`` resource is protected with ``@PreAuthorize`` annotation with the abac expression. The ``#abac.evaluate`` send the following authorization request to a PDP server. <br>
+`````json
 {
 	"Request": {
+		"AccessSubject": [{
+			"Attribute": [{
+				"AttributeId": "urn:oasis:names:tc:xacml:1.0:subject:subject-id",
+				"Value": ["Alice"]
+			}]
+		}],
 		"Resource": [{
-			"Attribute": {
+			"Attribute": [{
 				"AttributeId": "Attributes.resource.endpoint",
 				"Value": ["helloWorld"]
-			}
-		}],
-		"AccessSubject": [{
-			"Attribute": {
-				"AttributeId": "urn:oasis:names:tc:xacml:1.0:subject:subject-id",
-				"Value": ["pdp-user"]
-			}
+			}]
 		}]
 	}
 }
-````
-#### Web Security Expression (hasAccessToPath)
- - documentation to follow
-##### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security 
+`````
+where the value Alice is the current user name and the value helloWorld is the protected resource.
+
+##### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security

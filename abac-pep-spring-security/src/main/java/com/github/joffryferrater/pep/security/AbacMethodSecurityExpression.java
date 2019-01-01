@@ -3,6 +3,7 @@ package com.github.joffryferrater.pep.security;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.ActionCategory;
+import com.github.joffryferrater.request.Attribute;
 import com.github.joffryferrater.request.Category;
 import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.Request;
@@ -10,11 +11,12 @@ import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbacMethodSecurityExpression {
+public class AbacMethodSecurityExpression {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbacMethodSecurityExpression.class);
 
@@ -52,6 +54,42 @@ public abstract class AbacMethodSecurityExpression {
             environmentCategories);
         final Response pdpResponse = sendAuthorizationRequest(request);
         return isPermitted(pdpResponse);
+    }
+
+    public ResourceCategory resourceAttribute(String attributeId, List<Object> values){
+        ResourceCategory resourceCategory = new ResourceCategory();
+        final Attribute attribute = new Attribute();
+        attribute.setAttributeId(attributeId);
+        attribute.setValue(values);
+        resourceCategory.setAttributes(Collections.singletonList(attribute));
+        return resourceCategory;
+    }
+
+    public ActionCategory actionAttribute(String attributeId, List<Object> values) {
+        ActionCategory actionCategory = new ActionCategory();
+        final Attribute attribute = new Attribute();
+        attribute.setAttributeId(attributeId);
+        attribute.setValue(values);
+        actionCategory.setAttributes(Collections.singletonList(attribute));
+        return actionCategory;
+    }
+
+    public AccessSubjectCategory accessSubjectAttribute(String attributeId, List<Object> values) {
+        AccessSubjectCategory accessSubjectCategory = new AccessSubjectCategory();
+        Attribute attribute = new Attribute();
+        attribute.setAttributeId(attributeId);
+        attribute.setValue(values);
+        accessSubjectCategory.setAttributes(Collections.singletonList(attribute));
+        return accessSubjectCategory;
+    }
+
+    public EnvironmentCategory environmentAttribute(String attributeId, List<Object> values) {
+        EnvironmentCategory environmentCategory = new EnvironmentCategory();
+        Attribute attribute = new Attribute();
+        attribute.setAttributeId(attributeId);
+        attribute.setValue(values);
+        environmentCategory.setAttributes(Collections.singletonList(attribute));
+        return environmentCategory;
     }
 
     private Request buildRequest(List<ResourceCategory> resourceCategories,

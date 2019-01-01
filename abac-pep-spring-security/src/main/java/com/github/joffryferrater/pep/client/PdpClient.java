@@ -1,10 +1,14 @@
 package com.github.joffryferrater.pep.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import java.util.Base64;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +17,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PdpClient {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdpClient.class);
 
     private final RestTemplate restTemplate;
     private PdpConfiguration pdpConfiguration;
@@ -23,6 +29,7 @@ public class PdpClient {
     }
 
     public Response sendXacmlJsonRequest(XacmlRequest xacmlRequest) {
+        printAuthorizationRequest(xacmlRequest);
         HttpHeaders headers = createHeaders();
         HttpEntity<XacmlRequest> entity = new HttpEntity<>(xacmlRequest, headers);
         final String url = pdpConfiguration.getAuthorizeEndpoint();
@@ -46,6 +53,18 @@ public class PdpClient {
         }
         return Optional.of(Base64.getEncoder()
             .encodeToString((username + ":" + password).getBytes()));
+    }
+
+    private void printAuthorizationRequest(XacmlRequest xacmlRequest) {
+        if(pdpConfiguration.isPrintAuthorizationRequest()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                final String requestInString = objectMapper.writeValueAsString(xacmlRequest);
+                LOGGER.info("Authorization Request --> {}", requestInString);
+            } catch (JsonProcessingException e) {
+                //Do nothing
+            }
+        }
     }
 }
 
