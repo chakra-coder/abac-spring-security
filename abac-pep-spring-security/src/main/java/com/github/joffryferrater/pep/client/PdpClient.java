@@ -56,7 +56,7 @@ public class PdpClient {
     }
 
     private void printAuthorizationRequest(XacmlRequest xacmlRequest) {
-        if(pdpConfiguration.isPrintAuthorizationRequest()) {
+        if (pdpConfiguration.isPrintAuthorizationRequest()) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 final String requestInString = objectMapper.writeValueAsString(xacmlRequest);

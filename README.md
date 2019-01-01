@@ -75,6 +75,12 @@ In the example above, the ``/helloWorld`` resource is protected with ``@PreAutho
 	}
 }
 `````
-where the value Alice is the current user name and the value helloWorld is the protected resource.
-
+where the value Alice is the current user name and the value helloWorld is the protected resource. <br>5. Add the PDP server information in the application.properties file using the properties below:
+````properties
+pdp.server.authorize-endpoint=http://localhost:8083/authorize
+pdp.server.username=pdp-user
+pdp.server.password=password
+pdp.server.print-authorization-request=true
+````
+The ``pdp.server.print-authorization-request`` property is useful for debugging purposes. It prints the authorization request on the console.
 ##### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security
