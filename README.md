@@ -92,5 +92,8 @@ pdp.server.username=pdp-user
 pdp.server.password=password
 pdp.server.print-authorization-request=true
 ````
-The ``pdp.server.print-authorization-request`` property is useful for debugging purposes. It prints the authorization request on the console.
+The ``pdp.server.print-authorization-request`` property is useful for debugging purposes. It prints the authorization request on the console.<br>
+````bash
+01-01-2019 17:46:56.120 [http-nio-8888-exec-6] INFO  com.github.joffryferrater.pep.client.PdpClient.printAuthorizationRequest - Authorization Request --> {"Request":{"Resource":[{"Attribute":[{"AttributeId":"Attributes.resource.endpoint","Value":["helloWorld/someId"]}]}]}}
+````
 ##### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security
