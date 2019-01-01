@@ -1,13 +1,24 @@
 # Attribute Based Access Control for Spring Security
 The Attribute Based Access Control (ABAC) for Spring Security provides both method and web expressions to secure spring boot applications based on attributes evaluated against a policy from a Policy Decision Point (PDP) server.
-The expression is called ``#abac.evaluate(Category ... categories)`` which send an authorization request based on Json Profile of XACML 3.0 Specification (http://docs.oasis-open.org/xacml/xacml-json-http/v1.0/xacml-json-http-v1.0.html)
-The argument is an array of Category objects.
+The expressions are called ``#abac.evaluate(Category... categories)`` and  ``#abac.evaluateAttributes(String... attributes)`` which send authorization request based on Json Profile of XACML 3.0 Specification (http://docs.oasis-open.org/xacml/xacml-json-http/v1.0/xacml-json-http-v1.0.html)
+
+When using ``#abac.evaluateAttributes(String... attributes)``, the array of Strings must follow the format below:
+``access-subject:<attribute id>:<attribute values>``<br>
+``resource:<attribute id>:<attribute values>``<br>
+``action:<attribute id>:<attribute values>``<br>
+``environment:<attribute id>:<attribute values>``<br>
+
+When using ``#abac.evaluate(Category... categories)`` where the arguments is an array of Category objects, the following expressions may be used as arguments:
+``#abac.accessSubjectAttribute(<attribute id>, {<list of values>})``<br>
+``#abac.resourceAttribute(<attribute id>, {<list of values>})``<br>
+``#abac.actionAttribute(<attribute id>, {<list of values>})``<br>
+``#abac.environmentAttribute(<attribute id>, {<list of values>})``<br>
 
 ## How to use
 1. Build and publish this project to maven local: ``$ ./gradlew clean build publishToMavenLocal``
 2. Add the published artifacts from maven local to your spring boot project dependency. Example for gradle project:
-   	``compile('com.github.joffryferrater:abac-pep-spring-security:0.5.1')
-   	compile('com.github.joffryferrater:xacml-resource-models:0.5.1')``
+   	``compile('com.github.joffryferrater:abac-pep-spring-security:0.5.1')``<br>
+   	``compile('com.github.joffryferrater:xacml-resource-models:0.5.1')``
 3. Create a global method security configuration class. Example below:
 ````java
 import com.github.joffryferrater.pep.security.AbacMethodSecurityExpressionHandler;
@@ -40,8 +51,7 @@ public class SampleResource {
     private static final String HELLOWORLD_ACCESS = "#abac.evaluate("
         + "{#abac.resourceAttribute('Attributes.resource.endpoint', {'helloWorld'}), "
         + "#abac.accessSubjectAttribute('urn:oasis:names:tc:xacml:1.0:subject:subject-id', {#principal.name})})";
-    private static final String HELLOWORLD_ID_ACCESS = "#abac.evaluate("
-        + "{#abac.resourceAttribute('Attributes.resource.endpoint', {'helloWorld/'+#id})})";
+    private static final String HELLOWORLD_ID_ACCESS = "#abac.evaluateAttributes({'resource:Attributes.resource.endpoint:helloWorld/'+#id})";
     
     @GetMapping("/helloWorld")
     @PreAuthorize(HELLOWORLD_ACCESS)

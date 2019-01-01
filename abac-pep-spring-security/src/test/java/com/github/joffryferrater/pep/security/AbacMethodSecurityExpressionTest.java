@@ -48,6 +48,16 @@ public class AbacMethodSecurityExpressionTest extends TestBase {
     }
 
     @Test
+    public void evaluateShouldReturnTrueForAttributesStringArray() throws JsonProcessingException {
+        final Result mockResult = mockResult("Permit");
+        setExpectedPdpResponse(mockResult);
+
+        final boolean result = target.evaluateAttributes("access-subject:id:value", "resource:id:value", "action:id:value",
+            "environment:id:value");
+        assertThat(result, is(true));
+    }
+
+    @Test
     public void shouldReturnAccessSubjectCategoryWithOneAttribute() {
         final AccessSubjectCategory result = target
             .accessSubjectAttribute("id", Collections.singletonList("value"));

@@ -20,43 +20,97 @@ public class AbacMethodSecurityExpression {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbacMethodSecurityExpression.class);
 
-    private PdpClient pdpClient;
+    private final PdpClient pdpClient;
 
     public AbacMethodSecurityExpression(PdpClient pdpClient) {
         this.pdpClient = pdpClient;
     }
 
-    public boolean evaluate(Category ...categories) {
+    public boolean evaluateAttributes(String... attributes) {
+        List<AccessSubjectCategory> accessSubjectCategories = new ArrayList<>();
+        List<ResourceCategory> resourceCategories = new ArrayList<>();
+        List<ActionCategory> actionCategories = new ArrayList<>();
+        List<EnvironmentCategory> environmentCategories = new ArrayList<>();
+        for (String attribute : attributes) {
+            String[] expression = attribute.split(":", 3);
+            addAccessSubjectAttribute(accessSubjectCategories, expression);
+            addResourceAttribute(resourceCategories, expression);
+            addActionAttribute(actionCategories, expression);
+            addEnvironmentAttribute(environmentCategories, expression);
+        }
+        return evaluateAuthorizationRequest(accessSubjectCategories, resourceCategories, actionCategories,
+            environmentCategories);
+    }
+
+    private boolean evaluateAuthorizationRequest(List<AccessSubjectCategory> accessSubjectCategories,
+        List<ResourceCategory> resourceCategories, List<ActionCategory> actionCategories,
+        List<EnvironmentCategory> environmentCategories) {
+        Request request = buildRequest(resourceCategories, accessSubjectCategories, actionCategories,
+            environmentCategories);
+        final Response pdpResponse = getAuthorizationResponse(request);
+        return isPermitted(pdpResponse);
+    }
+
+    private void addAccessSubjectAttribute(List<AccessSubjectCategory> accessSubjectCategories, String[] expression) {
+        if ("access-subject".equals(expression[0])) {
+            AccessSubjectCategory accessSubjectCategory = accessSubjectAttribute(expression[1],
+                Collections.singletonList(expression[2]));
+            accessSubjectCategories.add(accessSubjectCategory);
+        }
+    }
+
+    private void addResourceAttribute(List<ResourceCategory> resourceCategories, String[] expression) {
+        if ("resource".equals(expression[0])) {
+            ResourceCategory resourceCategory = resourceAttribute(expression[1],
+                Collections.singletonList(expression[2]));
+            resourceCategories.add(resourceCategory);
+        }
+    }
+
+    private void addActionAttribute(List<ActionCategory> actionCategories, String[] expression) {
+        if ("action".equals(expression[0])) {
+            ActionCategory actionCategory = actionAttribute(expression[1], Collections.singletonList(expression[2]));
+            actionCategories.add(actionCategory);
+        }
+    }
+
+    private void addEnvironmentAttribute(List<EnvironmentCategory> environmentCategories, String[] expression) {
+        if ("environment".equals(expression[0])) {
+            EnvironmentCategory environmentCategory = environmentAttribute(expression[1],
+                Collections.singletonList(expression[2]));
+            environmentCategories.add(environmentCategory);
+        }
+    }
+
+    public boolean evaluate(Category... categories) {
         List<ResourceCategory> resourceCategories = new ArrayList<>();
         List<AccessSubjectCategory> accessSubjectCategories = new ArrayList<>();
         List<ActionCategory> actionCategories = new ArrayList<>();
         List<EnvironmentCategory> environmentCategories = new ArrayList<>();
-        for(Category category : categories) {
-            if(category instanceof ResourceCategory) {
+        for (Category category : categories) {
+            if (category instanceof ResourceCategory) {
                 ResourceCategory resourceCategory = (ResourceCategory) category;
                 resourceCategories.add(resourceCategory);
             }
-            if(category instanceof AccessSubjectCategory) {
+            if (category instanceof AccessSubjectCategory) {
                 AccessSubjectCategory accessSubjectCategory = (AccessSubjectCategory) category;
                 accessSubjectCategories.add(accessSubjectCategory);
             }
-            if(category instanceof ActionCategory) {
+            if (category instanceof ActionCategory) {
                 ActionCategory actionCategory = (ActionCategory) category;
                 actionCategories.add(actionCategory);
             }
-            if(category instanceof EnvironmentCategory) {
+            if (category instanceof EnvironmentCategory) {
                 EnvironmentCategory environmentCategory = (EnvironmentCategory) category;
                 environmentCategories.add(environmentCategory);
             }
 
         }
-        Request request = buildRequest(resourceCategories, accessSubjectCategories, actionCategories,
+        return evaluateAuthorizationRequest(accessSubjectCategories, resourceCategories, actionCategories,
             environmentCategories);
-        final Response pdpResponse = sendAuthorizationRequest(request);
-        return isPermitted(pdpResponse);
     }
 
-    public ResourceCategory resourceAttribute(String attributeId, List<Object> values){
+    public ResourceCategory resourceAttribute(String attributeId, List<Object> values) {
         ResourceCategory resourceCategory = new ResourceCategory();
         final Attribute attribute = new Attribute();
         attribute.setAttributeId(attributeId);
@@ -103,7 +157,7 @@ public class AbacMethodSecurityExpression {
         return request;
     }
 
-    private Response sendAuthorizationRequest(Request request) {
+    private Response getAuthorizationResponse(Request request) {
         XacmlRequest xacmlRequest = new XacmlRequest(request);
         return pdpClient.sendXacmlJsonRequest(xacmlRequest);
     }
