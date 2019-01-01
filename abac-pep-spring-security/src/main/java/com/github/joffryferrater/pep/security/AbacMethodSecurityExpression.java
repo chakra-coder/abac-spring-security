@@ -3,16 +3,14 @@ package com.github.joffryferrater.pep.security;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.ActionCategory;
-import com.github.joffryferrater.request.Attribute;
+import com.github.joffryferrater.request.Category;
 import com.github.joffryferrater.request.EnvironmentCategory;
 import com.github.joffryferrater.request.Request;
 import com.github.joffryferrater.request.ResourceCategory;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,59 +24,55 @@ public abstract class AbacMethodSecurityExpression {
         this.pdpClient = pdpClient;
     }
 
-    public boolean hasAccessToResource(String attributeId, List<Object> values) {
-        LOGGER.debug("Entering hasAccessToResource(attributeId={},values={}", attributeId, values);
-        final Request request = getAllCategoriesRequest(attributeId, values);
-        final XacmlRequest xacmlRequest = new XacmlRequest(request);
-        final Response pdpResponse = pdpClient.sendXacmlJsonRequest(xacmlRequest);
+    public boolean evaluate(Category ...categories) {
+        List<ResourceCategory> resourceCategories = new ArrayList<>();
+        List<AccessSubjectCategory> accessSubjectCategories = new ArrayList<>();
+        List<ActionCategory> actionCategories = new ArrayList<>();
+        List<EnvironmentCategory> environmentCategories = new ArrayList<>();
+        for(Category category : categories) {
+            if(category instanceof ResourceCategory) {
+                ResourceCategory resourceCategory = (ResourceCategory) category;
+                resourceCategories.add(resourceCategory);
+            }
+            if(category instanceof AccessSubjectCategory) {
+                AccessSubjectCategory accessSubjectCategory = (AccessSubjectCategory) category;
+                accessSubjectCategories.add(accessSubjectCategory);
+            }
+            if(category instanceof ActionCategory) {
+                ActionCategory actionCategory = (ActionCategory) category;
+                actionCategories.add(actionCategory);
+            }
+            if(category instanceof EnvironmentCategory) {
+                EnvironmentCategory environmentCategory = (EnvironmentCategory) category;
+                environmentCategories.add(environmentCategory);
+            }
+
+        }
+        Request request = buildRequest(resourceCategories, accessSubjectCategories, actionCategories,
+            environmentCategories);
+        final Response pdpResponse = sendAuthorizationRequest(request);
         return isPermitted(pdpResponse);
     }
 
-    private Request getAllCategoriesRequest(String attributeId, List<Object> values) {
+    private Request buildRequest(List<ResourceCategory> resourceCategories,
+        List<AccessSubjectCategory> accessSubjectCategories, List<ActionCategory> actionCategories,
+        List<EnvironmentCategory> environmentCategories) {
         Request request = new Request();
-        ResourceCategory resourceCategory = createResourceCategoryRequest(attributeId, values);
-        List<ResourceCategory> resourceCategories = new ArrayList<>();
-        resourceCategories.add(resourceCategory);
-        final Optional<List<ResourceCategory>> optionalResourceCategories = addResourceCategoryRequest();
-        optionalResourceCategories.ifPresent(resourceCategories::addAll);
         request.setResourceCategory(resourceCategories);
-        final Optional<List<ActionCategory>> actionCategories = addActionCategoryRequest();
-        actionCategories.ifPresent(request::setActionCategory);
-        final Optional<List<EnvironmentCategory>> environmentCategories = addEnvironmentCategoryRequest();
-        environmentCategories.ifPresent(request::setEnvironmentCategory);
-        final Optional<List<AccessSubjectCategory>> accessSubjectCategories = addAccessSubjectCategoryRequest();
-        accessSubjectCategories.ifPresent(request::setAccessSubjectCategory);
+        request.setAccessSubjectCategory(accessSubjectCategories);
+        request.setActionCategory(actionCategories);
+        request.setEnvironmentCategory(environmentCategories);
         return request;
+    }
+
+    private Response sendAuthorizationRequest(Request request) {
+        XacmlRequest xacmlRequest = new XacmlRequest(request);
+        return pdpClient.sendXacmlJsonRequest(xacmlRequest);
     }
 
     private boolean isPermitted(Response response) {
         final boolean isPermitted = "Permit".equals(response.getResults().get(0).getDecision());
         LOGGER.debug("isPermitted: {}", isPermitted);
         return isPermitted;
-    }
-
-    private ResourceCategory createResourceCategoryRequest(String attributeId, List<Object> values) {
-        Attribute attribute = new Attribute();
-        attribute.setAttributeId(attributeId);
-        attribute.setValue(values);
-        ResourceCategory resourceCategory = new ResourceCategory();
-        resourceCategory.setAttributes(Collections.singletonList(attribute));
-        return resourceCategory;
-    }
-
-    protected Optional<List<AccessSubjectCategory>> addAccessSubjectCategoryRequest() {
-        return Optional.empty();
-    }
-
-    protected Optional<List<ActionCategory>> addActionCategoryRequest() {
-        return Optional.empty();
-    }
-
-    protected Optional<List<EnvironmentCategory>> addEnvironmentCategoryRequest() {
-        return Optional.empty();
-    }
-
-    protected Optional<List<ResourceCategory>> addResourceCategoryRequest() {
-        return Optional.empty();
     }
 }
