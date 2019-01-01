@@ -37,7 +37,7 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
     }
 }
 ````
-Here we use ``AbacMethodSecurityExpressionHandler()`` which is provided by this project in order to use the expression ``#abac.evaluate`` in ``@PreAuthorize`` annotation.<br>
+Here we use ``AbacMethodSecurityExpressionHandler()`` which is provided by this project in order to use the expression ``#abac.evaluate`` and ``#abac.evaluateAttributes`` in ``@PreAuthorize`` annotation.<br>
 4 . Annotate the resource to be protected by ``@PreAuthorize(#abac.evaluate({<array of attributes}))``. Example below:
 ````java
 import java.security.Principal;
