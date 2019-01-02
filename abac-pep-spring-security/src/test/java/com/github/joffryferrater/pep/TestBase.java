@@ -11,21 +11,15 @@ import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.response.Response;
 import com.github.joffryferrater.response.Result;
-import java.util.Collection;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(PdpClient.class)
 public class TestBase {
-
-    private static final String ADMIN = "admin";
-    private static final String PASSWORD = "password";
 
     @Autowired
     private PdpConfiguration configuration;
@@ -47,47 +41,6 @@ public class TestBase {
         this.server.expect(requestTo(configuration.getAuthorizeEndpoint()))
             .andExpect(method(HttpMethod.POST))
             .andExpect(header("Content-Type", "application/xacml+json"))
-            //YWRtaW46cGFzc3dvcmQ= is base64 encoded of admin:password
-            .andExpect(header("Authorization", "Basic YWRtaW46cGFzc3dvcmQ="))
             .andRespond(withSuccess(responseInString, MediaType.APPLICATION_JSON));
     }
-
-    public class AuthenticationImpl implements Authentication {
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return null;
-        }
-
-        @Override
-        public Object getCredentials() {
-            return PASSWORD;
-        }
-
-        @Override
-        public Object getDetails() {
-            return ADMIN;
-        }
-
-        @Override
-        public Object getPrincipal() {
-            return ADMIN;
-        }
-
-        @Override
-        public boolean isAuthenticated() {
-            return true;
-        }
-
-        @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-        }
-
-        @Override
-        public String getName() {
-            return ADMIN;
-        }
-    }
-
 }

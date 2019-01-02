@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
-import java.util.Base64;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -40,19 +38,7 @@ public class PdpClient {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/xacml+json");
         headers.add("Accept", "application/json");
-        final Optional<String> base64EncodedCredentials = getBase64EncodedCredentials();
-        base64EncodedCredentials.ifPresent(credentials -> headers.add("Authorization", "Basic " + credentials));
         return headers;
-    }
-
-    private Optional<String> getBase64EncodedCredentials() {
-        final String username = pdpConfiguration.getUsername();
-        final String password = pdpConfiguration.getPassword();
-        if (username == null || password == null) {
-            return Optional.empty();
-        }
-        return Optional.of(Base64.getEncoder()
-            .encodeToString((username + ":" + password).getBytes()));
     }
 
     private void printAuthorizationRequest(XacmlRequest xacmlRequest) {
