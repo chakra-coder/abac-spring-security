@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.joffryferrater.pep.PepConfiguration;
+import com.github.joffryferrater.pep.BeanConfiguration;
 import com.github.joffryferrater.pep.TestBase;
 import com.github.joffryferrater.pep.client.PdpClient;
 import com.github.joffryferrater.request.AccessSubjectCategory;
@@ -25,7 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = PepConfiguration.class, initializers  = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = BeanConfiguration.class, initializers  = ConfigFileApplicationContextInitializer.class)
 public class AbacMethodSecurityExpressionTest extends TestBase {
 
     private AbacMethodSecurityExpression target;

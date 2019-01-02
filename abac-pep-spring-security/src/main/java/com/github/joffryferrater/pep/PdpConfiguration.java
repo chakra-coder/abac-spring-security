@@ -1,4 +1,4 @@
-package com.github.joffryferrater.pep.configuration;
+package com.github.joffryferrater.pep;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

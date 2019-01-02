@@ -2,7 +2,7 @@ package com.github.joffryferrater.pep.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.joffryferrater.pep.configuration.PdpConfiguration;
+import com.github.joffryferrater.pep.PdpConfiguration;
 import com.github.joffryferrater.request.XacmlRequest;
 import com.github.joffryferrater.response.Response;
 import org.slf4j.Logger;

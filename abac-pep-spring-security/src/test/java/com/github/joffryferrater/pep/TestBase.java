@@ -8,7 +8,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.joffryferrater.pep.client.PdpClient;
-import com.github.joffryferrater.pep.configuration.PdpConfiguration;
 import com.github.joffryferrater.response.Response;
 import com.github.joffryferrater.response.Result;
 import java.util.Collections;

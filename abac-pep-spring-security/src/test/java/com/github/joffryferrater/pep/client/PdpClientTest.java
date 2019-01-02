@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.joffryferrater.pep.PepConfiguration;
+import com.github.joffryferrater.pep.BeanConfiguration;
 import com.github.joffryferrater.pep.TestBase;
 import com.github.joffryferrater.request.AccessSubjectCategory;
 import com.github.joffryferrater.request.Attribute;
@@ -25,7 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = PepConfiguration.class, initializers  = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = BeanConfiguration.class, initializers  = ConfigFileApplicationContextInitializer.class)
 public class PdpClientTest extends TestBase {
 
     @Autowired
