@@ -163,6 +163,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 }
 
 ````
-Here we created a Web Security Configuration and we set the expression handler as ``AbacWebSecurityExpressionHandler`` which is also provided by this project in order to use the expression ``#abac.evaluate`` and ``#abac.evaluateAttributes`` expressions in ``access()`` as access expressions for securing web path.
+Here we created a Web Security Configuration and we set the expression handler as ``AbacWebSecurityExpressionHandler`` which is also provided by this project in order to use ``#abac.evaluate`` and ``#abac.evaluateAttributes`` expressions in ``access()`` as access expressions for securing the resource /securedPath.
 
 #### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security
