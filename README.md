@@ -18,8 +18,35 @@ When using ``#abac.evaluate(Category... categories)`` where the arguments is an 
 1. Build and publish this project to maven local: ``$ ./gradlew clean build publishToMavenLocal``
 2. Add the published artifacts from maven local to your Spring Boot project dependency. Example for gradle project:
    	``compile('com.github.joffryferrater:abac-pep-spring-security:0.5.1')``<br>
-   	``compile('com.github.joffryferrater:xacml-resource-models:0.5.1')``
-3. Create a global method security configuration class. Example below:
+   	``compile('com.github.joffryferrater:xacml-resource-models:0.5.1')``<br>
+3. Add the PDP server information in the application.properties file using the properties below:
+    ````properties
+    pdp.server.authorize-endpoint=http://localhost:8083/authorize
+    pdp.server.username=pdp-user
+    pdp.server.password=password
+    pdp.server.print-authorization-request=true
+    ````
+    The ``pdp.server.print-authorization-request`` property is useful for debugging purposes. It prints the authorization request on the console.<br>
+    ````bash
+    01-01-2019 17:46:56.120 [http-nio-8888-exec-6] INFO  com.github.joffryferrater.pep.client.PdpClient.printAuthorizationRequest - Authorization Request --> {"Request":{"Resource":[{"Attribute":[{"AttributeId":"Attributes.resource.endpoint","Value":["helloWorld/someId"]}]}]}}
+4. Include ``org.github.joffryferrater.pep`` in the scanBasePackages of your Spring Boot app. See example below: <br>
+```java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication(
+	scanBasePackages={
+		"com.github.joffryferrater.sampleappwithxacmlpepspringsecurity",
+		"com.github.joffryferrater.pep" //Scans the abac-spring-security configurations
+	})
+public class SampleAppWithXacmlPepSpringSecurityApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SampleAppWithXacmlPepSpringSecurityApplication.class, args);
+	}
+}
+````
+<br>5. Create a global method security configuration class. Example below:
 ````java
 import com.github.joffryferrater.pep.security.AbacMethodSecurityExpressionHandler;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +65,8 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 }
 ````
 Here we use ``AbacMethodSecurityExpressionHandler()`` which is provided by this project in order to use the expression ``#abac.evaluate`` and ``#abac.evaluateAttributes`` in ``@PreAuthorize`` annotation.<br>
-4 . Annotate the resource to be protected by ``@PreAuthorize(#abac.evaluate({<array of attributes}))`` or ``@PreAuthorize(#abac.evaluateAttributes(<string formatted attributes separated by :>))``. Example below:
+
+6 . Annotate the resource to be protected by ``@PreAuthorize(#abac.evaluate({<array of attributes}))`` or ``@PreAuthorize(#abac.evaluateAttributes(<string formatted attributes separated by :>))``. Example below:
 ````java
 import java.security.Principal;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -85,15 +113,6 @@ In the example above, the ``/helloWorld`` resource is protected with ``@PreAutho
 	}
 }
 `````
-where the value Alice is the current user name and the value helloWorld is the protected resource. <br>5. Add the PDP server information in the application.properties file using the properties below:
-````properties
-pdp.server.authorize-endpoint=http://localhost:8083/authorize
-pdp.server.username=pdp-user
-pdp.server.password=password
-pdp.server.print-authorization-request=true
-````
-The ``pdp.server.print-authorization-request`` property is useful for debugging purposes. It prints the authorization request on the console.<br>
-````bash
-01-01-2019 17:46:56.120 [http-nio-8888-exec-6] INFO  com.github.joffryferrater.pep.client.PdpClient.printAuthorizationRequest - Authorization Request --> {"Request":{"Resource":[{"Attribute":[{"AttributeId":"Attributes.resource.endpoint","Value":["helloWorld/someId"]}]}]}}
-````
-##### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security
+where the value Alice is the current user name and the value helloWorld is the protected resource. <br>
+
+#### See sample project here: https://github.com/jferrater/sample-app-with-abac-spring-security
