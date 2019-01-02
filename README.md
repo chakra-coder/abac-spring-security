@@ -16,7 +16,7 @@ When using ``#abac.evaluate(Category... categories)`` where the arguments is an 
 
 ## How to use
 1. Build and publish this project to maven local: ``$ ./gradlew clean build publishToMavenLocal``
-2. Add the published artifacts from maven local to your spring boot project dependency. Example for gradle project:
+2. Add the published artifacts from maven local to your Spring Boot project dependency. Example for gradle project:
    	``compile('com.github.joffryferrater:abac-pep-spring-security:0.5.1')``<br>
    	``compile('com.github.joffryferrater:xacml-resource-models:0.5.1')``
 3. Create a global method security configuration class. Example below:
@@ -38,7 +38,7 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 }
 ````
 Here we use ``AbacMethodSecurityExpressionHandler()`` which is provided by this project in order to use the expression ``#abac.evaluate`` and ``#abac.evaluateAttributes`` in ``@PreAuthorize`` annotation.<br>
-4 . Annotate the resource to be protected by ``@PreAuthorize(#abac.evaluate({<array of attributes}))``. Example below:
+4 . Annotate the resource to be protected by ``@PreAuthorize(#abac.evaluate({<array of attributes}))`` or ``@PreAuthorize(#abac.evaluateAttributes(<string formatted attributes separated by :>))``. Example below:
 ````java
 import java.security.Principal;
 import org.springframework.security.access.prepost.PreAuthorize;
