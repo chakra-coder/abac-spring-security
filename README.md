@@ -1,5 +1,5 @@
 # Attribute Based Access Control for Spring Security
-The Attribute Based Access Control (ABAC) for Spring Security provides both method and web expressions to secure spring boot applications based on attributes evaluated against a policy from a Policy Decision Point (PDP) server.
+The Attribute Based Access Control (ABAC) for Spring Security provides both method and web expressions to secure Spring Boot applications based on attributes evaluated against a policy from a Policy Decision Point (PDP) server.
 The expressions are called ``#abac.evaluate(Category... categories)`` and  ``#abac.evaluateAttributes(String... attributes)`` which send authorization request based on Json Profile of XACML 3.0 Specification (http://docs.oasis-open.org/xacml/xacml-json-http/v1.0/xacml-json-http-v1.0.html)
 
 When using ``#abac.evaluateAttributes(String... attributes)``, the array of Strings must follow the format below:<br>
