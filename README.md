@@ -16,7 +16,7 @@ When using ``#abac.evaluate(Category... categories)`` where the arguments is an 
 
 ## How to use
 1. Build and publish this project to maven local: ``$ ./gradlew clean build publishToMavenLocal``
-2. Add the two published artifacts from maven local together with the Spring Security to your Spring Boot project dependency. Example for gradle project:
+2. Add the two published artifacts from maven local together with the Spring Security to your Spring Boot project dependency. Example for gradle project:<br>
         ``compile('org.springframework.boot:spring-boot-starter-security')``<br>
    	``compile('com.github.joffryferrater:abac-pep-spring-security:0.5.1')``<br>
    	``compile('com.github.joffryferrater:xacml-resource-models:0.5.1')``<br>
