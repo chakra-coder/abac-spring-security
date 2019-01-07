@@ -147,6 +147,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String SECURED_PATH_ACCESS = "#abac.evaluateAttributes('resource:Attributes.resource.endpoint:securedPath', 'action:Attributes.action-id:read')";
+    
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -160,9 +163,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    @Bean
-    public AbacWebSecurityExpressionHandler webSecurityExpressionHandler() {
-        return new AbacWebSecurityExpressionHandler();
+    private AbacWebSecurityExpressionHandler webSecurityExpressionHandler() {
+        return this.applicationContext.getBean(AbacWebSecurityExpressionHandler.class);
     }
 
 }
